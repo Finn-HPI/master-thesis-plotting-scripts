@@ -1,0 +1,31 @@
+2025-05-02T14:46:17+02:00
+Running ./hyriseBenchmarkPlayground
+Run on (16 X 5100 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x8)
+  L1 Instruction 32 KiB (x8)
+  L2 Unified 256 KiB (x8)
+  L3 Unified 16384 KiB (x1)
+Load Average: 0.66, 1.88, 1.73
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"Fan-in","Tuples"
+"BM_MULTIWAY_MERGE/4/16777216/iterations:5/manual_time",5,13.1141,13.1191,ms,,,,,,4,1.67772e+07
+"BM_MULTIWAY_MERGE/8/16777216/iterations:5/manual_time",5,30.6547,30.6629,ms,,,,,,8,1.67772e+07
+"BM_MULTIWAY_MERGE/16/16777216/iterations:5/manual_time",5,38.2172,38.2318,ms,,,,,,16,1.67772e+07
+"BM_MULTIWAY_MERGE/32/16777216/iterations:5/manual_time",5,46.2945,46.3128,ms,,,,,,32,1.67772e+07
+"BM_MULTIWAY_MERGE/64/16777216/iterations:5/manual_time",5,61.7466,61.7757,ms,,,,,,64,1.67772e+07
+"BM_MULTIWAY_MERGE/128/16777216/iterations:5/manual_time",5,87.1124,87.1668,ms,,,,,,128,1.67772e+07
+"BM_MULTIWAY_MERGE/256/16777216/iterations:5/manual_time",5,116.679,117.12,ms,,,,,,256,1.67772e+07
+"BM_MULTIWAY_MERGE/512/16777216/iterations:5/manual_time",5,234.645,234.763,ms,,,,,,512,1.67772e+07
+"BM_MULTIWAY_MERGE/1024/16777216/iterations:5/manual_time",5,679.782,686.177,ms,,,,,,1024,1.67772e+07
+"BM_MULTIWAY_MERGE/2048/16777216/iterations:5/manual_time",5,2434.39,2453.26,ms,,,,,,2048,1.67772e+07
+"BM_KWAY_MERGE/4/16777216/iterations:5/manual_time",5,112.267,112.268,ms,,,,,,4,1.67772e+07
+"BM_KWAY_MERGE/8/16777216/iterations:5/manual_time",5,136.048,136.052,ms,,,,,,8,1.67772e+07
+"BM_KWAY_MERGE/16/16777216/iterations:5/manual_time",5,157.79,157.79,ms,,,,,,16,1.67772e+07
+"BM_KWAY_MERGE/32/16777216/iterations:5/manual_time",5,173.9,173.909,ms,,,,,,32,1.67772e+07
+"BM_KWAY_MERGE/64/16777216/iterations:5/manual_time",5,193.404,193.425,ms,,,,,,64,1.67772e+07
+"BM_KWAY_MERGE/128/16777216/iterations:5/manual_time",5,213.901,213.939,ms,,,,,,128,1.67772e+07
+"BM_KWAY_MERGE/256/16777216/iterations:5/manual_time",5,232.547,232.619,ms,,,,,,256,1.67772e+07
+"BM_KWAY_MERGE/512/16777216/iterations:5/manual_time",5,252.122,252.249,ms,,,,,,512,1.67772e+07
+"BM_KWAY_MERGE/1024/16777216/iterations:5/manual_time",5,273.523,278.185,ms,,,,,,1024,1.67772e+07
+"BM_KWAY_MERGE/2048/16777216/iterations:5/manual_time",5,295.278,302.129,ms,,,,,,2048,1.67772e+07

@@ -1,0 +1,21 @@
+2025-05-02T13:50:02+02:00
+Running ./hyriseBenchmarkPlayground
+Run on (16 X 5100 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x8)
+  L1 Instruction 32 KiB (x8)
+  L2 Unified 256 KiB (x8)
+  L3 Unified 16384 KiB (x1)
+Load Average: 1.31, 1.11, 1.01
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"Fan-in","Tuples"
+"BM_MULTIWAY_MERGE/4/16777216/iterations:5/manual_time",5,13.1242,13.1291,ms,,,,,,4,1.67772e+07
+"BM_MULTIWAY_MERGE/8/16777216/iterations:5/manual_time",5,30.7938,30.7962,ms,,,,,,8,1.67772e+07
+"BM_MULTIWAY_MERGE/16/16777216/iterations:5/manual_time",5,38.3508,38.3629,ms,,,,,,16,1.67772e+07
+"BM_MULTIWAY_MERGE/32/16777216/iterations:5/manual_time",5,45.1828,45.1978,ms,,,,,,32,1.67772e+07
+"BM_MULTIWAY_MERGE/64/16777216/iterations:5/manual_time",5,55.9731,55.9938,ms,,,,,,64,1.67772e+07
+"BM_MULTIWAY_MERGE/128/16777216/iterations:5/manual_time",5,71.2724,71.1764,ms,,,,,,128,1.67772e+07
+"BM_MULTIWAY_MERGE/256/16777216/iterations:5/manual_time",5,115.201,116.598,ms,,,,,,256,1.67772e+07
+"BM_MULTIWAY_MERGE/512/16777216/iterations:5/manual_time",5,236.48,236.616,ms,,,,,,512,1.67772e+07
+"BM_MULTIWAY_MERGE/1024/16777216/iterations:5/manual_time",5,687.271,689.707,ms,,,,,,1024,1.67772e+07
+"BM_MULTIWAY_MERGE/2048/16777216/iterations:5/manual_time",5,2541.52,2549.01,ms,,,,,,2048,1.67772e+07

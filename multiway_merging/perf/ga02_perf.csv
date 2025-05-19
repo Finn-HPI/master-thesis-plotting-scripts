@@ -1,0 +1,40 @@
+2025-05-04T09:29:04+00:00
+Running ./hyriseBenchmarkPlayground
+Run on (72 X 3537 MHz CPU s)
+CPU Caches:
+  L1 Data 64 KiB (x72)
+  L1 Instruction 64 KiB (x72)
+  L2 Unified 1024 KiB (x72)
+  L3 Unified 116736 KiB (x1)
+Load Average: 0.25, 0.08, 0.03
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"Fan-in","Tuples","cpu-cycles","instructions"
+"BM_MWAY_MERGE/4/16777216/1048576/iterations:5/manual_time",5,11.9375,11.9447,ms,,,,,,4,1.67772e+07,7.80408e+06,2.34736e+07
+"BM_MWAY_MERGE/8/16777216/1048576/iterations:5/manual_time",5,26.5846,26.5972,ms,,,,,,8,1.67772e+07,1.72542e+07,5.0151e+07
+"BM_MWAY_MERGE/16/16777216/1048576/iterations:5/manual_time",5,35.6616,35.6758,ms,,,,,,16,1.67772e+07,2.3193e+07,6.71155e+07
+"BM_MWAY_MERGE/32/16777216/1048576/iterations:5/manual_time",5,45.6404,45.6572,ms,,,,,,32,1.67772e+07,2.96662e+07,8.47343e+07
+"BM_MWAY_MERGE/64/16777216/1048576/iterations:5/manual_time",5,56.0833,56.1138,ms,,,,,,64,1.67772e+07,3.62917e+07,1.04588e+08
+"BM_MWAY_MERGE/128/16777216/1048576/iterations:5/manual_time",5,65.171,65.8847,ms,,,,,,128,1.67772e+07,4.22794e+07,1.3155e+08
+"BM_MWAY_MERGE/256/16777216/1048576/iterations:5/manual_time",5,86.5365,87.7962,ms,,,,,,256,1.67772e+07,5.55371e+07,1.83717e+08
+"BM_MWAY_MERGE/512/16777216/1048576/iterations:5/manual_time",5,132.327,133.386,ms,,,,,,512,1.67772e+07,8.38425e+07,3.31611e+08
+"BM_MWAY_MERGE/1024/16777216/1048576/iterations:5/manual_time",5,282.712,283.011,ms,,,,,,1024,1.67772e+07,1.78721e+08,8.54339e+08
+"BM_MWAY_MERGE/2048/16777216/1048576/iterations:5/manual_time",5,875.047,875.853,ms,,,,,,2048,1.67772e+07,5.48624e+08,3.0113e+09
+"BM_MWAY_MERGE/4/16777216/1660245/iterations:5/manual_time",5,11.6996,11.7074,ms,,,,,,4,1.67772e+07,7.65007e+06,2.35469e+07
+"BM_MWAY_MERGE/8/16777216/1660245/iterations:5/manual_time",5,26.0645,26.0765,ms,,,,,,8,1.67772e+07,1.69261e+07,5.01065e+07
+"BM_MWAY_MERGE/16/16777216/1660245/iterations:5/manual_time",5,35.0105,35.0299,ms,,,,,,16,1.67772e+07,2.27334e+07,6.69958e+07
+"BM_MWAY_MERGE/32/16777216/1660245/iterations:5/manual_time",5,44.3424,44.3582,ms,,,,,,32,1.67772e+07,2.87735e+07,8.43305e+07
+"BM_MWAY_MERGE/64/16777216/1660245/iterations:5/manual_time",5,55.3904,55.4205,ms,,,,,,64,1.67772e+07,3.62071e+07,1.02967e+08
+"BM_MWAY_MERGE/128/16777216/1660245/iterations:5/manual_time",5,66.7194,67.0605,ms,,,,,,128,1.67772e+07,4.31842e+07,1.2611e+08
+"BM_MWAY_MERGE/256/16777216/1660245/iterations:5/manual_time",5,79.4751,79.5382,ms,,,,,,256,1.67772e+07,5.13095e+07,1.6472e+08
+"BM_MWAY_MERGE/512/16777216/1660245/iterations:5/manual_time",5,115.053,115.493,ms,,,,,,512,1.67772e+07,7.36162e+07,2.63162e+08
+"BM_MWAY_MERGE/1024/16777216/1660245/iterations:5/manual_time",5,213.318,213.388,ms,,,,,,1024,1.67772e+07,1.35015e+08,5.96847e+08
+"BM_MWAY_MERGE/2048/16777216/1660245/iterations:5/manual_time",5,555.024,555.752,ms,,,,,,2048,1.67772e+07,3.47818e+08,1.87185e+09
+"BM_KWAY_MERGE/4/16777216/iterations:5/manual_time",5,53.3536,53.3626,ms,,,,,,4,1.67772e+07,3.21506e+07,2.17267e+08
+"BM_KWAY_MERGE/8/16777216/iterations:5/manual_time",5,63.4144,63.4194,ms,,,,,,8,1.67772e+07,3.8665e+07,2.73053e+08
+"BM_KWAY_MERGE/16/16777216/iterations:5/manual_time",5,73.5798,73.5951,ms,,,,,,16,1.67772e+07,4.73462e+07,3.21921e+08
+"BM_KWAY_MERGE/32/16777216/iterations:5/manual_time",5,83.9347,84.3853,ms,,,,,,32,1.67772e+07,5.32427e+07,3.70791e+08
+"BM_KWAY_MERGE/64/16777216/iterations:5/manual_time",5,96.079,96.0999,ms,,,,,,64,1.67772e+07,6.02952e+07,4.23812e+08
+"BM_KWAY_MERGE/128/16777216/iterations:5/manual_time",5,107.804,108.201,ms,,,,,,128,1.67772e+07,6.93247e+07,4.78183e+08
+"BM_KWAY_MERGE/256/16777216/iterations:5/manual_time",5,121.172,121.441,ms,,,,,,256,1.67772e+07,7.63654e+07,5.35586e+08
+"BM_KWAY_MERGE/512/16777216/iterations:5/manual_time",5,135.161,135.275,ms,,,,,,512,1.67772e+07,8.62735e+07,5.92871e+08
+"BM_KWAY_MERGE/1024/16777216/iterations:5/manual_time",5,186.109,186.339,ms,,,,,,1024,1.67772e+07,1.19088e+08,6.58568e+08
+"BM_KWAY_MERGE/2048/16777216/iterations:5/manual_time",5,212.213,212.749,ms,,,,,,2048,1.67772e+07,1.35292e+08,7.19881e+08
