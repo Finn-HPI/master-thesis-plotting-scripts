@@ -1,13 +1,7 @@
 import pandas as pd
-import argparse
-import matplotlib.pyplot as plt
-import seaborn as sns
 import math
 import re;
 import numpy as np
-import os
-
-
 
 def buffer_size(total_bytes, fan_in):
     if (math.isnan(total_bytes)):
@@ -215,8 +209,6 @@ def main():
 
     unified_df = pd.concat(df_list, ignore_index=True)
     to_latex_tables(unified_df)
-    # print(unified_df)
-   
 
 if __name__ == "__main__":
     main()
