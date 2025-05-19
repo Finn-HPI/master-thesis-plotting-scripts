@@ -2,7 +2,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
-import argparse
 import math
 import glob
 import matplotlib.patheffects as path_effects
