@@ -45,9 +45,9 @@ def read_benchmark_to_dataframe(filepath):
 
 name = {
     "power_merge_bench.csv": r"$\bf{(a)}\ \bf{System}\ \bf{A}$" + "\n(IBM Power10)",
-    "amd_merge_bench.csv": r"$\bf{(b)}\ \bf{System}\ \bf{B}$" + "\n(AMD EPYC 7742)",
+    "avx2_merge_bench.csv": r"$\bf{(b)}\ \bf{System}\ \bf{B}$" + "\n(AMD EPYC 7742)",
     "arm_merge_bench.csv": r"$\bf{(c)}\ \bf{System}\ \bf{C}$" + "\n(ARM Neoverse-V2)",
-    "nx05_merge_bench.csv": r"$\bf{(d)}\ \bf{System}\ \bf{E}$" + "\n(Intel Xeon Platinum 8352Y)"
+    "avx512_merge_bench.csv": r"$\bf{(d)}\ \bf{System}\ \bf{E}$" + "\n(Intel Xeon Platinum 8352Y)"
 }
 
 file_paths = [
@@ -105,11 +105,11 @@ def main():
         ax.set_xlabel('Merge fan-in')
         ax.grid(True, axis='y', linestyle='--', linewidth=1)
     
-    # g.add_legend()
-    # sns.move_legend(
-    #     g, "lower center",
-    #     bbox_to_anchor=(.425, 1), ncol=3, title=None, frameon=True
-    # )
+    g.add_legend()
+    sns.move_legend(
+        g, "lower center",
+        bbox_to_anchor=(.425, 1), ncol=3, title=None, frameon=True
+    )
    
     g.savefig(args.output, dpi=500)
     # plt.show()
