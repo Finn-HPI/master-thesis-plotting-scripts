@@ -1,0 +1,1 @@
+2213062797ns|JoinHash (Left) c_custkey = o_custkey|Output: 153383533 rows in 256 chunks, 2 s 213 ms. Operator step runtimes: BuildSideMaterializing 122 ms 663 µs, ProbeSideMaterializing 7 ms 413 µs, Clustering 109 ms 428 µs, Building 1 s 384 ms, Probing 199 ms 368 µs, OutputWriting 388 ms 330 µs. Radix bits: 8. Build side is right.

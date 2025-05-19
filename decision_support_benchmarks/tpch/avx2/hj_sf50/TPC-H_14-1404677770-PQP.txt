@@ -1,0 +1,1 @@
+144311319ns|JoinHash (Inner) l_partkey = p_partkey|Output: 3739085 rows in 32 chunks, 144 ms 311 µs. Operator step runtimes: BuildSideMaterializing 87 ms 408 µs, ProbeSideMaterializing 3 ms 700 µs, Clustering 15 ms 352 µs, Building 13 ms 697 µs, Probing 11 ms 145 µs, OutputWriting 12 ms 654 µs. Radix bits: 5. Build side is left.
