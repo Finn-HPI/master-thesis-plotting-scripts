@@ -87,7 +87,7 @@ def plot_facetgrid(all_data, output):
         plt.show()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Plot partitioning time as a FacetGrid with line plots.")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--output", required=True, help="Output file name (e.g., plot.png). If not provided, the plot is shown.")
 
     args = parser.parse_args()

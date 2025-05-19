@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import argparse
 
-parser = argparse.ArgumentParser(description="Plot partitioning time as a FacetGrid with line plots.")
+parser = argparse.ArgumentParser()
 parser.add_argument("--dir", required=True, help="directory (e.g. arm or power)")
 parser.add_argument("--output", required=True, help="Output file name (e.g., plot.png).")
 args = parser.parse_args()

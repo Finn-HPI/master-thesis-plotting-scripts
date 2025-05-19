@@ -6,7 +6,7 @@ import argparse
 
 
 # Parse command-line arguments
-parser = argparse.ArgumentParser(description="Plot throughput from CSV files.")
+parser = argparse.ArgumentParser()
 parser.add_argument("--dir", required=True, help="Directory (e.g., arm)")
 parser.add_argument("--output", required=True, help="Output file name (e.g., plot.png).")
 args = parser.parse_args()

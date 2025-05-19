@@ -117,7 +117,7 @@ def plot_facetgrid(all_data, output):
 
 # Example Usage: python3 plot_num_cache_lines_evaluation.py --output plot.png
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Plot partitioning time as a FacetGrid with line plots.")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--output", required=True, help="Output file name (e.g., plot.png). If not provided, the plot is shown.")
 
     args = parser.parse_args()
