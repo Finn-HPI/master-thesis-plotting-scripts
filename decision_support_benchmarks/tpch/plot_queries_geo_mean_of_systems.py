@@ -62,10 +62,10 @@ def plot(data, plot_name):
     hj_times = df[df["Algo"] == "HJ"][["Query", "Scale Factor", "GeoMeanTime"]]
     hj_times = hj_times.rename(columns={"GeoMeanTime": "HJ_GeoMeanTime"})
 
-    # 2. Merge HJ baseline back into the full dataframe
+    # Merge HJ baseline back into the full dataframe
     df = df.merge(hj_times, on=["Query", "Scale Factor"], how="left")
 
-    # 3. Normalize
+    # Normalize
     df["NormalizedTime"] = df["GeoMeanTime"] / df["HJ_GeoMeanTime"]
     print(df)
 
