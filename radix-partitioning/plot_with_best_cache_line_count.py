@@ -77,7 +77,7 @@ g = sns.FacetGrid(
     aspect=3,
     col_order=list(name.values()),
 )
-g.set_titles(col_template="{col_name}")
+g.set_titles(col_template="{col_name}", size=14)
 
 g.map_dataframe(sns.scatterplot, x="num_partitions", y="total_time", alpha=0)
 
@@ -91,46 +91,50 @@ def annotate(data, **kws):
     # Get TLB L1 and L2 values
     tlb_l1_x = data["tlb_l1"].iloc[0]
     tlb_l2_x = data["tlb_l2"].iloc[0]
+    
+    y_pos = 0.85
 
     ax.axvline(
         x=tlb_l1_x,
         color=sns.color_palette("deep")[4],
         linestyle="--",
         label="L1 TLB entries",
-        lw=1.25,
-        ymax=0.925,
+        lw=2,
+        ymax=y_pos,
     )
     ax.axvline(
         x=tlb_l2_x,
         color=sns.color_palette("deep")[3],
         linestyle="--",
         label="L2 TLB entries",
-        lw=1.25,
-        ymax=0.925,
+        lw=2,
+        ymax=y_pos,
     )
+    
+    label_size = 12
 
     ax.annotate(
-        r"L1 TLB cache limit",
-        xy=(tlb_l1_x, ax.get_ylim()[1] * 1),
+        "L1 TLB limit",
+        xy=(tlb_l1_x, ax.get_ylim()[1] * 0.95),
         xytext=(0, 0),
         textcoords="offset points",
         rotation=0,
         va="center",
         ha="center",
-        fontsize=7,
+        fontsize=label_size,
         weight='bold',
         color=sns.color_palette("deep")[4],
     )
     
     ax.annotate(
-        "L2 TLB cache limit",
-        xy=(tlb_l2_x, ax.get_ylim()[1] * 1),
+        "L2 TLB limit",
+        xy=(tlb_l2_x, ax.get_ylim()[1] * 0.95),
         xytext=(0, 0),
         textcoords="offset points",
         rotation=0,
         va="center",
         ha="center",
-        fontsize=7,
+        fontsize=label_size,
         weight='bold',
         color=sns.color_palette("deep")[3],
     )
@@ -166,14 +170,17 @@ for ax in g.axes.flat:
     ax.set_ylabel("")  # Remove individual y-axis titles
     font_size = ax.title.get_fontsize()
 
+# plt.figtext(0.5, 0, "Number of cache-lines per buffer", ha="center", fontsize=font_size+4)
+#     plt.figtext(0, 0.5, "Total Partitioning Time [ms]", va="center", rotation="vertical", fontsize=font_size+4)
+
 plt.figtext(
     0.5,
     0,
-    "Number of partitions = TLB entries (assuming each partition bucket is in a different page)",
+    "Number of partitions (= required TLB entries)",
     ha="center",
-    fontsize=font_size,
+    fontsize=20,
 )
-plt.figtext(0, 0.5, "Time [ms]", va="center", rotation="vertical", fontsize=font_size)
+plt.figtext(0, 0.5, "Time [ms]", va="center", rotation="vertical", fontsize=20)
 
 # plt.show()
 g.savefig(args.output, dpi=800, bbox_inches="tight")

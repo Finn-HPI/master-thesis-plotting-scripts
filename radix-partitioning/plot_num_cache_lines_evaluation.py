@@ -60,7 +60,7 @@ def plot_facetgrid(all_data, output):
     g.map_dataframe(sns.lineplot, x="num_cache_lines", y="total_time", hue="num_partitions", 
                     style="num_partitions", markers=True, palette=palette)
     
-    g.set_titles(col_template="{col_name}", row_template="")#, weight="bold")
+    g.set_titles(col_template="{col_name}", row_template="", size=12)#, weight="bold")
     g.set_axis_labels("Number of cache-lines per partition buffer", "Total Partitioning Time [ms]")
     
     for ax in g.axes.flat:
@@ -103,14 +103,17 @@ def plot_facetgrid(all_data, output):
         font_size = ax.title.get_fontsize()
 
     # Manually set global axis labels
-    plt.figtext(0.5, 0, "Number of cache-lines per partition buffer", ha="center", fontsize=font_size+4)
+    plt.figtext(0.5, 0, "Number of cache-lines per buffer", ha="center", fontsize=font_size+4)
     plt.figtext(0, 0.5, "Total Partitioning Time [ms]", va="center", rotation="vertical", fontsize=font_size+4)
     
-    g.add_legend(title="Fan-out")
+    g.add_legend()
+    g._legend.set_title("Fan-out", prop={'size': font_size+2})
+    for text in g._legend.get_texts():
+        text.set_fontsize(font_size+2)
 
     # Save or show the plot
     if output:
-        g.savefig(output, dpi=1200, bbox_inches='tight')
+        g.savefig(output, dpi=500, bbox_inches='tight')
     else:
         plt.show()
 

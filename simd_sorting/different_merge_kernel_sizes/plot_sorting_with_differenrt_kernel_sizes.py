@@ -54,9 +54,9 @@ palette[3] = palette[4]
 palette = palette[:4] # We only need four colors
 
 # Create a FacetGrid for separate plots per directory
-g = sns.FacetGrid(final_df, col="directory", sharey=False, col_wrap=2, height=5, aspect=1.5, col_order=list(name.values()))
+g = sns.FacetGrid(final_df, col="directory", sharey=False, col_wrap=2, height=5, aspect=2, col_order=list(name.values()))
 g.map_dataframe(sns.pointplot, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['s', '^', 'h', 'H'], markersize=5)
-g.set_titles(col_template="{col_name}", row_template="", size=16)#, weight="bold")
+g.set_titles(col_template="{col_name}", row_template="", size=20)#, weight="bold")
 # Remove axis titles (set them globally instead)
 for ax in g.axes.flat:
     ax.grid(True, axis='y', linestyle='--', linewidth=1)
@@ -64,19 +64,19 @@ for ax in g.axes.flat:
     ax.set_ylabel("")  # Remove individual y-axis titles
 
 # Manually set global axis labels
-plt.figtext(0.5, -0.02, "Number of tuples (in $2^{20}$)", ha="center", fontsize=16)
-plt.figtext(-0.02, 0.5, "Sort throughput [M. tuples / s]", va="center", rotation="vertical", fontsize=16)
+plt.figtext(0.5, -0.02, "Number of tuples [$2^{20}$]", ha="center", fontsize=20)
+plt.figtext(-0.02, 0.5, "Throughput [M. tuples / s]", va="center", rotation="vertical", fontsize=20)
 
 # Add y-ticks explicitly, making sure all plots have visible y-axis ticks
 for ax in g.axes.flat:
-    ax.tick_params(axis="y", which="both", left=True)  # Ensure y-ticks are visible
-    ax.tick_params(axis="x", which="both", bottom=True)  # Ensure x-ticks are visible
+    ax.tick_params(axis="y", which="both", left=True, labelsize=16)  # Ensure y-ticks are visible
+    ax.tick_params(axis="x", which="both", bottom=True, labelsize=16)  # Ensure x-ticks are visible
 
-g.add_legend()
-sns.move_legend(
-        g, "lower center",
-        bbox_to_anchor=(.5, 1), ncol=4, title=None, frameon=True,
-    )
+# g.add_legend()
+# sns.move_legend(
+#         g, "lower center",
+#         bbox_to_anchor=(.5, 1), ncol=4, title=None, frameon=True,
+#     )
 
 plt.tight_layout()
 

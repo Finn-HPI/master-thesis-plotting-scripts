@@ -31,7 +31,7 @@ for file in files:
 final_df = pd.concat(dataframes)
 
 # Plot
-plt.figure(figsize=(10, 7))
+plt.figure(figsize=(10, 5))
 plt.rcParams.update({
     "font.size": 24,  # Increase overall font size
     "axes.labelsize": 24,  # Increase axis labels
@@ -48,18 +48,23 @@ palette = sns.color_palette()
 palette[2] = palette[3]
 palette[3] = palette[4]
 
-sns.pointplot(data=final_df, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['s', '^', 'h', 'H'], markersize=5)
-plt.xlabel("Scale")
-plt.ylabel("Sort throughput [M. tuples / s]")
+ax = sns.pointplot(data=final_df, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['s', '^', 'h', 'H'], markersize=5)
+label_size=20
+plt.xlabel("Scale", size=label_size)
+plt.ylabel("Throughput [M. tuples / s]", size=label_size)
 
 plt.legend()
 # plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=len(final_df['file'].unique()))
-# plt.legend([],[], frameon=True)
+plt.legend([],[], frameon=False)
+
+
+ax.tick_params(axis="y", which="both", left=True, labelsize=16)  # Ensure y-ticks are visible
+ax.tick_params(axis="x", which="both", bottom=True, labelsize=16)  # Ensure x-ticks are visible
 
 
 # Adjust layout to prevent cutting off the legend
-plt.tight_layout(rect=[0, 0.1, 1, 1])
-plt.subplots_adjust(bottom=0.08)  # Adjust this to reduce the white space
+plt.tight_layout()
+plt.subplots_adjust(bottom=0.15)  # Adjust this to reduce the white space
 
 # Setting equispaced x-ticks
 min_scale = final_df["scale"].min()
@@ -70,7 +75,7 @@ x_values = [1, 2, 4, 8, 16, 32, 64, 128, 256]
 
 # Set a linear scale for x-axis and make the ticks equispaced
 plt.xticks(ticks=range(len(x_values)), labels=[str(x) for x in x_values])
-plt.xlabel("Number of tuples (in $2^{20}$)")
+plt.xlabel("Number of tuples [$2^{20}$]")
 
 plt.savefig(args.output, dpi=600)
 # plt.show()

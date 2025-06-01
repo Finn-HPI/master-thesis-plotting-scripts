@@ -53,9 +53,9 @@ show_scale = 10
 time_unit = "ms"
 
 dist_name = {
-    "key_distribution_a": "(A) R non-unique in [0, |R|) and R = S",
-    "key_distribution_b": "(B) R unique in [0, |R|), S non-unique sampled from R",
-    "key_distribution_c": "(C) R unique in [0, |R|), S non-unique sampled from R (according to Zipf distr.)",
+    "key_distribution_a": "(A) R non-unique in [0, |R|) and R = S\n",
+    "key_distribution_b": "(B) R unique in [0, |R|), S non-unique sampled from R\n",
+    "key_distribution_c": "(C) R unique in [0, |R|), S non-unique sampled from R\n(according to Zipf distr.)",
 }
 
 
@@ -133,8 +133,10 @@ g = sns.FacetGrid(
     data, col="dist", col_wrap=3, height=5, aspect=1.5, sharex=False, sharey=False
 )
 
-g.set_titles(col_template="{col_name}", weight="bold")
-
+label_size=20
+# g.set_titles(col_template="{col_name}", weight="bold", size=30)
+g.set_titles(col_template="", weight="bold", size=label_size)
+ 
 ymin = data["Comparisons"].min()
 ymax = data["Comparisons"].max() + 2
 
@@ -157,9 +159,16 @@ def custom_plot(data, **kwargs):
 
     ax2.set_ylim(ymin, ymax)
     ax2.set_yticks(np.arange(0, ymax + 1, step=5))
+    
+    ax.tick_params(axis='x', labelsize=14) 
+    ax.tick_params(axis='y', labelsize=14) 
+    ax2.tick_params(axis='y', labelsize=14) 
 
     if ax == g.axes.flat[-1]:
-        ax2.set_ylabel("Number of key comparisons [M] $\\mathit{{(bars)}}$")
+        #    ax2.set_ylabel("Number of key comparisons [$10^6$] $\\mathit{{(bars)}}$", fontsize=16)
+        ax2.set_ylabel("#Key comparisons [M]\n(bars)", fontsize=label_size)
+        # ax2.set_ylabel('')
+        # ax2.set_yticklabels([])
     else:
         ax2.set_ylabel("")
         ax2.set_yticklabels([])
@@ -168,24 +177,24 @@ def custom_plot(data, **kwargs):
 g.map_dataframe(custom_plot)
 
 custom_xlabels = {
-    "(A) R non-unique in [0, |R|) and R = S": "Occurrences of each non-unique value",
-    "(B) R unique in [0, |R|), S non-unique sampled from R": "Occurrences of each non-unique value",
-    "(C) R unique in [0, |R|), S non-unique sampled from R (according to Zipf distr.)": "Skew [%]",
+    "(A) R non-unique in [0, |R|) and R = S\n": "Occurrences of each non-unique value",
+    "(B) R unique in [0, |R|), S non-unique sampled from R\n": "Occurrences of each non-unique value",
+    "(C) R unique in [0, |R|), S non-unique sampled from R\n(according to Zipf distr.)": "Skew [%]",
 }
 
-g.set_axis_labels("", f"Join phase time [{time_unit}] $\\mathit{{(lines)}}$")
+g.set_axis_labels("", f"(lines)\nJoin phase [{time_unit}]", fontsize=label_size)
 for ax, title in zip(g.axes.flat, g.col_names):
-    ax.set_xlabel(custom_xlabels.get(title, "x"))
+    ax.set_xlabel(custom_xlabels.get(title, "x"), fontsize=label_size)
 
-g.add_legend()
-sns.move_legend(
-    g,
-    "lower center",
-    bbox_to_anchor=(0.5, 1),
-    ncol=5,
-    title=None,
-    frameon=True,
-)
+# g.add_legend()
+# sns.move_legend(
+#     g,
+#     "lower center",
+#     bbox_to_anchor=(0.5, 1),
+#     ncol=5,
+#     title=None,
+#     frameon=True,
+# )
 
 plt.tight_layout()
 

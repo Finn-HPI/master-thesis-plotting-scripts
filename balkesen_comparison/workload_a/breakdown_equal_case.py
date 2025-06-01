@@ -11,12 +11,20 @@ plt.rcParams.update({
     "legend.fontsize": 16   # Increase legend font size
 })
 
+name = {
+    'SSMJ [double]': 'SSMJ\n[double]',
+    'SSMJ [int64_t]': 'SSMJ\n[int64_t]',
+    'm-way w/o NUMA': 'm-way\n(w/o NUMA)',
+    'm-way with NUMA': 'm-way\n(NUMA)',
+}
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', type=str, required=True, help="Path to the breakdown file.")
 parser.add_argument("--output", type=str, default='breakdown_b.png', help="Output file name (e.g., plot.png).")
 args = parser.parse_args()
 
 df = pd.read_csv(args.file)
+df['algo'] = df['algo'].map(name)
 
 # Normalize by num_tuples
 stages = ["partition", "sort", "merge", "join"]
@@ -46,19 +54,21 @@ for i, stage in enumerate(stages):
 # Add total time labels on top of bars
 for i, total in enumerate(total_times):
     ax.text(x[i], bottoms[i], f"{total:.2f}", ha='center', va='bottom', fontsize=14, fontweight='bold')
+ 
+labelsize = 18
     
-ax.tick_params(axis="y", which="both", left=True)  # Ensure y-ticks are visible
-ax.tick_params(axis="x", which="both", bottom=True)  # Ensure x-ticks are visible
+ax.tick_params(axis="y", which="both", left=True, labelsize=labelsize)  # Ensure y-ticks are visible
+ax.tick_params(axis="x", which="both", bottom=True, labelsize=labelsize)  # Ensure x-ticks are visible
 
 plt.ylim(top=1.075 * max(total_times))
 
 # Labels and title
-ax.set_ylabel("Join duration [s]")
+ax.set_ylabel("Join duration [s]", fontsize=labelsize)
 ax.set_xticks(x)
 ax.set_xticklabels(df["algo"], rotation=0)
 
 
-ax.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=4)
+# ax.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=4)
 
 plt.tight_layout()
 

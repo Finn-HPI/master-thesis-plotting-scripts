@@ -28,7 +28,7 @@ for file in files:
 final_df = pd.concat(dataframes)
 
 # Plot
-plt.figure(figsize=(11, 8))
+plt.figure(figsize=(10, 6))
 plt.rcParams.update({
     "font.size": 24,  # Increase overall font size
     "axes.labelsize": 24,  # Increase axis labels
@@ -48,17 +48,14 @@ palette = palette[:4]
 
 ax = sns.pointplot(data=final_df, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['s', '^', 'h', 'H'], linestyles=["-", "-", "--", "--"], markersize=5)
 
-plt.xlabel("Scale")
-plt.ylabel("Sort throughput [M. tuples / s]")
+ax.tick_params(axis="y", which="both", left=True, labelsize=16)  # Ensure y-ticks are visible
+ax.tick_params(axis="x", which="both", bottom=True, labelsize=16)  # Ensure x-ticks are visible
 
+# plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=len(final_df['file'].unique()))
+plt.legend([],[], frameon=False)
 
-ax.tick_params(axis="y", which="both", left=True)  # Ensure y-ticks are visible
-ax.tick_params(axis="x", which="both", bottom=True)  # Ensure x-ticks are visible
-
-plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=len(final_df['file'].unique()))
-# plt.legend([],[], frameon=False)
-
-plt.xlabel("Number of tuples (in $2^{20}$)")
+plt.ylabel("Throughput [M. tuples / s]", size=20)
+plt.xlabel("Number of tuples [$2^{20}$]", size=20)
 
 plt.tight_layout()
 plt.savefig(args.output, dpi=600)

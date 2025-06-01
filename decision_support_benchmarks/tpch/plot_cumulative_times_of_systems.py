@@ -83,58 +83,58 @@ def plot(data, plot_name):
             times[int(i / 3)].append(h)
             i += 1
 
-        i = 0
-        for p in ax.patches:
-            h, w, x = p.get_height(), p.get_width(), p.get_x()
-            xy = (x + w / 2.0, h / 2)
-            if i < 3:
-                if i == 0:
-                    ax.annotate(
-                        text="bl.",
-                        xy=xy,
-                        color="lightgray",
-                        ha="center",
-                        va="center",
-                        rotation=90,
-                        fontsize=label_fontsize - 1,
-                    )
-                else:
-                    ax.annotate(
-                        text="baseline",
-                        xy=xy,
-                        color="lightgray",
-                        ha="center",
-                        va="center",
-                        rotation=90,
-                        fontsize=label_fontsize - 1,
-                    )
-            elif i < 6:
-                index = i - 3
-                speedup = times[0][index] / times[1][index]
-                ax.annotate(
-                    text=f"{speedup:.2f}x",
-                    xy=xy,
-                    color="white",
-                    ha="center",
-                    va="center",
-                    rotation=0,
-                    fontsize=label_fontsize - 1,
-                    fontweight="bold",
-                )
-            elif i < 9:
-                index = i - 6
-                speedup = times[0][index] / times[2][index]
-                ax.annotate(
-                    text=f"{speedup:.2f}x",
-                    xy=xy,
-                    color="white",
-                    ha="center",
-                    va="center",
-                    rotation=0,
-                    fontsize=label_fontsize - 1,
-                    fontweight="bold",
-                )
-            i += 1
+        # i = 0
+        # for p in ax.patches:
+        #     h, w, x = p.get_height(), p.get_width(), p.get_x()
+        #     xy = (x + w / 2.0, h / 2)
+        #     if i < 3:
+        #         if i == 0:
+        #             ax.annotate(
+        #                 text="bl.",
+        #                 xy=xy,
+        #                 color="#dad8d6",
+        #                 ha="center",
+        #                 va="center",
+        #                 rotation=90,
+        #                 fontsize=label_fontsize,
+        #             )
+        #         else:
+        #             ax.annotate(
+        #                 text="baseline",
+        #                 xy=xy,
+        #                 color="#dad8d6",
+        #                 ha="center",
+        #                 va="center",
+        #                 rotation=90,
+        #                 fontsize=label_fontsize +2,
+        #             )
+        #     elif i < 6:
+        #         index = i - 3
+        #         speedup = times[0][index] / times[1][index]
+        #         ax.annotate(
+        #             text=f"{speedup:.2f}x",
+        #             xy=xy,
+        #             color="white",
+        #             ha="center",
+        #             va="center",
+        #             rotation=0,
+        #             fontsize=label_fontsize - 1,
+        #             fontweight="bold",
+        #         )
+        #     elif i < 9:
+        #         index = i - 6
+        #         speedup = times[0][index] / times[2][index]
+        #         ax.annotate(
+        #             text=f"{speedup:.2f}x",
+        #             xy=xy,
+        #             color="white",
+        #             ha="center",
+        #             va="center",
+        #             rotation=0,
+        #             fontsize=label_fontsize - 1,
+        #             fontweight="bold",
+        #         )
+        #     i += 1
 
     g.set_titles(col_template="{col_name}", row_template="", size=12, fontweight="bold")
     g.set_ylabels(label=f"Time [{time_unit}]")

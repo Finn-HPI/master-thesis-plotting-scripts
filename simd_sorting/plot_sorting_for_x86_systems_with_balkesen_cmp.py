@@ -25,7 +25,8 @@ def load_data_from_directory(directory):
             file_path = os.path.join(directory, file)
             df = pd.read_csv(file_path)
             df["throughput_mtuples_per_sec"] = df["num_tuples"] / df["time_us"]
-            df["file"] = file.replace('.csv', '')
+            algo = file.replace('.csv', '')
+            df["file"] = 'AVX sort' if algo == 'Balkesen' else algo
             df["directory"] = name[os.path.basename(directory)] # Add the directory as a new column
             dataframes.append(df)
             index += 1
@@ -40,54 +41,70 @@ final_df = pd.DataFrame()  # Initialize an empty dataframe
 # Process each directory
 for directory in directories:
     dir_data = load_data_from_directory(directory)
+    print(directory)
+    # Filter each group
+    avx = dir_data[dir_data['file'] == 'AVX sort'][['scale', 'time_us']].rename(
+        columns={'time_us': 'avx'}
+    )
+    simd_double = dir_data[dir_data['file'] == 'SIMD sort [double]'][['scale', 'time_us']].rename(
+        columns={'time_us': 'simd_double'}
+    )
+    simd_int64 = dir_data[dir_data['file'] == 'SIMD sort [int64_t]'][['scale', 'time_us']].rename(
+        columns={'time_us': 'simd_int64'}
+    )
+
+    # Merge all on scale
+    merged = avx.merge(simd_double, on='scale').merge(simd_int64, on='scale')
+
+    # Compute speedups and round
+    merged['speedup_double'] = (merged['avx'] / merged['simd_double']).round(2)
+    merged['speedup_int64'] = (merged['avx'] / merged['simd_int64']).round(2)
+
+    # Select desired output
+    print(merged[['scale', 'speedup_double', 'speedup_int64']])
+    print('\n')
     final_df = pd.concat([final_df, dir_data])
 
 
-plt.figure(figsize=(14, 6))
-fontsize = 18
-plt.rcParams.update({
-    "font.size": fontsize,
-    "axes.labelsize": fontsize,
-    "xtick.labelsize": fontsize,
-    "ytick.labelsize": fontsize,
-    "legend.fontsize": fontsize
-})
 
-sns.set_theme(style="white")
+# plt.figure(figsize=(14, 6))
+# fontsize = 18
+# plt.rcParams.update({
+#     "font.size": fontsize,
+#     "axes.labelsize": fontsize,
+#     "xtick.labelsize": fontsize,
+#     "ytick.labelsize": fontsize,
+#     "legend.fontsize": fontsize
+# })
 
-palette = sns.color_palette()
-tmp = palette[1]
-palette[1] = palette[0]
-palette[0] = palette[2]
-palette[2] = tmp
-palette = palette[:5]
+# sns.set_theme(style="white")
 
+# palette = sns.color_palette()[:5]
+# g = sns.FacetGrid(final_df, col="directory", sharey=False, sharex=True, col_wrap=3, height=6, aspect=1.5)
 
-g = sns.FacetGrid(final_df, col="directory", sharey=False, sharex=True, col_wrap=3, height=6, aspect=1.5)
+# g.map_dataframe(sns.pointplot, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['o', 's', '^', 'h', 'H'], linestyles=["-", "-", "-", "--", "--"], hue_order=['SIMD sort [double]', 'SIMD sort [int64_t]', 'AVX sort', 'boost::pdqsort', 'std::sort'], markersize=5)
+# g.set_titles(col_template="{col_name}", row_template="", size=30)#, weight="bold")
 
-g.map_dataframe(sns.pointplot, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['o', 's', '^', 'h', 'H'], linestyles=["-", "-", "-", "--", "--"], markersize=5)
-g.set_titles(col_template="{col_name}", row_template="", size=fontsize)#, weight="bold")
-
-for ax in g.axes.flat:
-    ax.grid(True, axis='y', linestyle='--', linewidth=1)
-    ax.set_xlabel("")  # Remove individual x-axis titles
-    ax.set_ylabel("")  # Remove individual y-axis titles
+# for ax in g.axes.flat:
+#     ax.grid(True, axis='y', linestyle='--', linewidth=1)
+#     ax.set_xlabel("")  # Remove individual x-axis titles
+#     ax.set_ylabel("")  # Remove individual y-axis titles
 
 
-plt.figtext(0.5, -0.02, "Number of tuples (in $2^{20}$)", ha="center", fontsize=20)
-plt.figtext(-0.02, 0.5, "Sort throughput [M. tuples / s]", va="center", rotation="vertical", fontsize=20)
+# plt.figtext(0.5, -0.05, "Number of tuples [$2^{20}$]", ha="center", fontsize=26)
+# plt.figtext(-0.015, 0.5, "Throughput [M. tuples / s]", va="center", rotation="vertical", fontsize=26)
 
-for ax in g.axes.flat:
-    ax.tick_params(axis="y", which="both", left=True, labelsize=fontsize)  # Ensure y-ticks are visible
-    ax.tick_params(axis="x", which="both", bottom=True, labelsize=fontsize)  # Ensure x-ticks are visible
+# for ax in g.axes.flat:
+#     ax.tick_params(axis="y", which="both", left=True, labelsize=18)  # Ensure y-ticks are visible
+#     ax.tick_params(axis="x", which="both", bottom=True, labelsize=18)  # Ensure x-ticks are visible
 
 
-g.add_legend()
-sns.move_legend(
-        g, "lower center",
-        bbox_to_anchor=(.5, 1), ncol=5, title=None, frameon=True,
-    )
+# # g.add_legend()
+# # sns.move_legend(
+# #         g, "lower center",
+# #         bbox_to_anchor=(.5, 1), ncol=5, title=None, frameon=True,
+# #     )
 
-plt.tight_layout()
-g.savefig(args.output, dpi=600)
-# plt.show()
+# plt.tight_layout()
+# g.savefig(args.output, dpi=500)
+# # plt.show()
