@@ -1,0 +1,21 @@
+2025-06-02T11:22:29+00:00
+Running ./hyriseBenchmarkPlayground
+Run on (128 X 2250 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x128)
+  L1 Instruction 32 KiB (x128)
+  L2 Unified 512 KiB (x128)
+  L3 Unified 16384 KiB (x32)
+Load Average: 0.15, 0.03, 0.01
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"Fan-in","Tuples"
+"BM_MWAY_MERGE/4/16777216/16777216/iterations:5/manual_time",5,17.1273,17.1546,ms,,,,,,4,1.67772e+07,1.16293e+07,1.83659e+07
+"BM_MWAY_MERGE/8/16777216/16777216/iterations:5/manual_time",5,37.194,37.2212,ms,,,,,,8,1.67772e+07,2.50546e+07,3.63743e+07
+"BM_MWAY_MERGE/16/16777216/16777216/iterations:5/manual_time",5,46.8461,46.8723,ms,,,,,,16,1.67772e+07,3.15967e+07,4.84643e+07
+"BM_MWAY_MERGE/32/16777216/16777216/iterations:5/manual_time",5,56.2919,56.3295,ms,,,,,,32,1.67772e+07,3.79905e+07,6.06046e+07
+"BM_MWAY_MERGE/64/16777216/16777216/iterations:5/manual_time",5,65.93,65.9789,ms,,,,,,64,1.67772e+07,4.45949e+07,7.29583e+07
+"BM_MWAY_MERGE/128/16777216/16777216/iterations:5/manual_time",5,73.5503,73.6146,ms,,,,,,128,1.67772e+07,4.97321e+07,8.59451e+07
+"BM_MWAY_MERGE/256/16777216/16777216/iterations:5/manual_time",5,85.6538,85.7647,ms,,,,,,256,1.67772e+07,5.80872e+07,1.01018e+08
+"BM_MWAY_MERGE/512/16777216/16777216/iterations:5/manual_time",5,96.4679,96.6662,ms,,,,,,512,1.67772e+07,6.53485e+07,1.23888e+08
+"BM_MWAY_MERGE/1024/16777216/16777216/iterations:5/manual_time",5,118.778,119.836,ms,,,,,,1024,1.67772e+07,8.0625e+07,1.7845e+08
+"BM_MWAY_MERGE/2048/16777216/16777216/iterations:5/manual_time",5,188.737,190.049,ms,,,,,,2048,1.67772e+07,1.26784e+08,3.52662e+08

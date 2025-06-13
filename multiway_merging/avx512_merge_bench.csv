@@ -1,4 +1,4 @@
-2025-05-04T09:54:36+00:00
+2025-05-05T13:32:36+00:00
 Running ./hyriseBenchmarkPlayground
 Run on (128 X 3400 MHz CPU s)
 CPU Caches:
@@ -6,36 +6,36 @@ CPU Caches:
   L1 Instruction 32 KiB (x64)
   L2 Unified 1280 KiB (x64)
   L3 Unified 49152 KiB (x2)
-Load Average: 0.59, 3.02, 2.62
+Load Average: 0.26, 0.40, 0.36
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
-name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"Fan-in","Tuples"
-"BM_MWAY_MERGE/4/16777216/1310720/iterations:5/manual_time",5,15.5028,15.5113,ms,,,,,,4,1.67772e+07
-"BM_MWAY_MERGE/8/16777216/1310720/iterations:5/manual_time",5,36.8203,36.8313,ms,,,,,,8,1.67772e+07
-"BM_MWAY_MERGE/16/16777216/1310720/iterations:5/manual_time",5,45.8224,45.8386,ms,,,,,,16,1.67772e+07
-"BM_MWAY_MERGE/32/16777216/1310720/iterations:5/manual_time",5,55.0042,55.0248,ms,,,,,,32,1.67772e+07
-"BM_MWAY_MERGE/64/16777216/1310720/iterations:5/manual_time",5,63.8127,63.8251,ms,,,,,,64,1.67772e+07
-"BM_MWAY_MERGE/128/16777216/1310720/iterations:5/manual_time",5,78.2849,78.3474,ms,,,,,,128,1.67772e+07
-"BM_MWAY_MERGE/256/16777216/1310720/iterations:5/manual_time",5,105.157,106.048,ms,,,,,,256,1.67772e+07
-"BM_MWAY_MERGE/512/16777216/1310720/iterations:5/manual_time",5,182.116,182.293,ms,,,,,,512,1.67772e+07
-"BM_MWAY_MERGE/1024/16777216/1310720/iterations:5/manual_time",5,438.658,439.897,ms,,,,,,1024,1.67772e+07
-"BM_MWAY_MERGE/2048/16777216/1310720/iterations:5/manual_time",5,1406.54,1416.37,ms,,,,,,2048,1.67772e+07
-"BM_MWAY_MERGE/4/16777216/1572864/iterations:5/manual_time",5,15.8694,15.8782,ms,,,,,,4,1.67772e+07
-"BM_MWAY_MERGE/8/16777216/1572864/iterations:5/manual_time",5,37.4356,37.4411,ms,,,,,,8,1.67772e+07
-"BM_MWAY_MERGE/16/16777216/1572864/iterations:5/manual_time",5,45.4277,45.4441,ms,,,,,,16,1.67772e+07
-"BM_MWAY_MERGE/32/16777216/1572864/iterations:5/manual_time",5,55.6098,55.6315,ms,,,,,,32,1.67772e+07
-"BM_MWAY_MERGE/64/16777216/1572864/iterations:5/manual_time",5,63.0347,63.069,ms,,,,,,64,1.67772e+07
-"BM_MWAY_MERGE/128/16777216/1572864/iterations:5/manual_time",5,76.2661,76.3238,ms,,,,,,128,1.67772e+07
-"BM_MWAY_MERGE/256/16777216/1572864/iterations:5/manual_time",5,102.049,102.142,ms,,,,,,256,1.67772e+07
-"BM_MWAY_MERGE/512/16777216/1572864/iterations:5/manual_time",5,164.872,170.856,ms,,,,,,512,1.67772e+07
-"BM_MWAY_MERGE/1024/16777216/1572864/iterations:5/manual_time",5,365.57,376.52,ms,,,,,,1024,1.67772e+07
-"BM_MWAY_MERGE/2048/16777216/1572864/iterations:5/manual_time",5,1170.02,1179.97,ms,,,,,,2048,1.67772e+07
-"BM_KWAY_MERGE/4/16777216/iterations:5/manual_time",5,173.231,173.219,ms,,,,,,4,1.67772e+07
-"BM_KWAY_MERGE/8/16777216/iterations:5/manual_time",5,192.438,192.448,ms,,,,,,8,1.67772e+07
-"BM_KWAY_MERGE/16/16777216/iterations:5/manual_time",5,213.717,216.728,ms,,,,,,16,1.67772e+07
-"BM_KWAY_MERGE/32/16777216/iterations:5/manual_time",5,216.827,216.839,ms,,,,,,32,1.67772e+07
-"BM_KWAY_MERGE/64/16777216/iterations:5/manual_time",5,221.142,221.151,ms,,,,,,64,1.67772e+07
-"BM_KWAY_MERGE/128/16777216/iterations:5/manual_time",5,229.282,229.323,ms,,,,,,128,1.67772e+07
-"BM_KWAY_MERGE/256/16777216/iterations:5/manual_time",5,244.088,250.43,ms,,,,,,256,1.67772e+07
-"BM_KWAY_MERGE/512/16777216/iterations:5/manual_time",5,260.839,260.995,ms,,,,,,512,1.67772e+07
-"BM_KWAY_MERGE/1024/16777216/iterations:5/manual_time",5,285.322,286.561,ms,,,,,,1024,1.67772e+07
-"BM_KWAY_MERGE/2048/16777216/iterations:5/manual_time",5,317.366,318.574,ms,,,,,,2048,1.67772e+07
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message,"Fan-in","Tuples","cpu-cycles","instructions"
+"BM_MWAY_MERGE/4/16777216/1310720/manual_time",5,15.3967,15.4119,ms,,,,,,4,1.67772e+07,7.88432e+06,9.51919e+06
+"BM_MWAY_MERGE/8/16777216/1310720/iterations:5/manual_time",5,36.0507,36.0675,ms,,,,,,8,1.67772e+07,1.8873e+07,1.89902e+07
+"BM_MWAY_MERGE/16/16777216/1310720/iterations:5/manual_time",5,45.6266,45.647,ms,,,,,,16,1.67772e+07,2.42673e+07,2.56677e+07
+"BM_MWAY_MERGE/32/16777216/1310720/iterations:5/manual_time",5,55.0347,55.0628,ms,,,,,,32,1.67772e+07,2.94278e+07,3.33081e+07
+"BM_MWAY_MERGE/64/16777216/1310720/iterations:5/manual_time",5,62.7114,62.7519,ms,,,,,,64,1.67772e+07,3.37156e+07,4.36423e+07
+"BM_MWAY_MERGE/128/16777216/1310720/iterations:5/manual_time",5,77.527,77.5958,ms,,,,,,128,1.67772e+07,4.17295e+07,6.33621e+07
+"BM_MWAY_MERGE/256/16777216/1310720/iterations:5/manual_time",5,104.204,104.311,ms,,,,,,256,1.67772e+07,5.6127e+07,1.14141e+08
+"BM_MWAY_MERGE/512/16777216/1310720/iterations:5/manual_time",5,179.047,179.244,ms,,,,,,512,1.67772e+07,9.64406e+07,2.77317e+08
+"BM_MWAY_MERGE/1024/16777216/1310720/iterations:5/manual_time",5,435.874,438.221,ms,,,,,,1024,1.67772e+07,2.33904e+08,8.51383e+08
+"BM_MWAY_MERGE/2048/16777216/1310720/iterations:5/manual_time",5,1405.95,1411.43,ms,,,,,,2048,1.67772e+07,7.52238e+08,3.11174e+09
+"BM_MWAY_MERGE/4/16777216/50331648/manual_time",5,25.8645,25.879,ms,,,,,,4,1.67772e+07,1.37239e+07,1.17986e+07
+"BM_MWAY_MERGE/8/16777216/50331648/manual_time",5,52.7067,52.7258,ms,,,,,,8,1.67772e+07,2.63875e+07,1.88848e+07
+"BM_MWAY_MERGE/16/16777216/50331648/manual_time",5,64.2587,64.2783,ms,,,,,,16,1.67772e+07,3.17773e+07,2.51893e+07
+"BM_MWAY_MERGE/32/16777216/50331648/manual_time",5,77.0149,77.0453,ms,,,,,,32,1.67772e+07,3.77121e+07,3.15242e+07
+"BM_MWAY_MERGE/64/16777216/50331648/manual_time",5,90.0472,90.0764,ms,,,,,,64,1.67772e+07,4.32254e+07,3.79529e+07
+"BM_MWAY_MERGE/128/16777216/50331648/manual_time",5,86.3856,86.4562,ms,,,,,,128,1.67772e+07,4.62806e+07,4.45921e+07
+"BM_MWAY_MERGE/256/16777216/50331648/manual_time",5,93.5156,93.6251,ms,,,,,,256,1.67772e+07,5.03687e+07,5.22132e+07
+"BM_MWAY_MERGE/512/16777216/50331648/manual_time",5,104.185,104.386,ms,,,,,,512,1.67772e+07,5.43812e+07,6.23959e+07
+"BM_MWAY_MERGE/1024/16777216/50331648/manual_time",5,113.931,115.413,ms,,,,,,1024,1.67772e+07,6.18429e+07,8.39382e+07
+"BM_MWAY_MERGE/2048/16777216/50331648/manual_time",5,143.156,144.383,ms,,,,,,2048,1.67772e+07,7.76304e+07,1.48133e+08
+"BM_KWAY_MERGE/4/16777216/iterations:5/manual_time",5,173.508,173.514,ms,,,,,,4,1.67772e+07,9.65969e+07,2.62565e+08
+"BM_KWAY_MERGE/8/16777216/iterations:5/manual_time",5,193.429,193.443,ms,,,,,,8,1.67772e+07,1.07924e+08,3.259e+08
+"BM_KWAY_MERGE/16/16777216/iterations:5/manual_time",5,214.529,214.539,ms,,,,,,16,1.67772e+07,1.19731e+08,3.83574e+08
+"BM_KWAY_MERGE/32/16777216/iterations:5/manual_time",5,216.71,216.734,ms,,,,,,32,1.67772e+07,1.20618e+08,4.36954e+08
+"BM_KWAY_MERGE/64/16777216/iterations:5/manual_time",5,219.885,219.923,ms,,,,,,64,1.67772e+07,1.22734e+08,4.95426e+08
+"BM_KWAY_MERGE/128/16777216/iterations:5/manual_time",5,230.573,230.636,ms,,,,,,128,1.67772e+07,1.27484e+08,5.55409e+08
+"BM_KWAY_MERGE/256/16777216/iterations:5/manual_time",5,241.866,241.963,ms,,,,,,256,1.67772e+07,1.34274e+08,6.19656e+0
+"BM_KWAY_MERGE/512/16777216/iterations:5/manual_time",5,257.693,257.866,ms,,,,,,512,1.67772e+07,1.43376e+08,6.81896e+08
+"BM_KWAY_MERGE/1024/16777216/iterations:5/manual_time",5,282.602,283.596,ms,,,,,,1024,1.67772e+07,1.57487e+08,7.55822e+08
+"BM_KWAY_MERGE/2048/16777216/iterations:5/manual_time",5,309.986,311.719,ms,,,,,,2048,1.67772e+07,1.67901e+08,8.23579e+08

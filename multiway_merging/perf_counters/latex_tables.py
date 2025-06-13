@@ -181,7 +181,7 @@ def to_latex_tables(df):
         lines = roc.splitlines()[8:]
 
         # Join the remaining lines back into a string
-        result = result + '\n& \\multicolumn{11}{c}{$\\Delta$ ROC (Change in [\\%])}\\\\' + "\n".join(lines)
+        result = result + '\n& \\multicolumn{11}{c}{$\\Delta$ ROC [\\%]}\\\\' + "\n".join(lines)
         result = result.replace('Fan-in &  &  &  &  &  &  &  &  \\\\', '')
         result = result.replace("\\toprule", "\\hline")
         result = result.replace("\\midrule", "\\hline")
