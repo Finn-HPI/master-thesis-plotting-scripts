@@ -1,9 +1,11 @@
 import os
 import argparse
 import pandas as pd
+from scipy.stats import gmean
 import seaborn as sns
-import re
 import numpy as np
+import re
+from matplotlib.ticker import ScalarFormatter
 import matplotlib.pyplot as plt
 
 name = {
@@ -11,6 +13,19 @@ name = {
     'JoinSortMerge': 'SMJ',
     'JoinSimdSortMerge': 'SSMJ'
 }
+
+system_name = {
+    "cp03": r"$\bf{System}\ \bf{A}$" + "\n(IBM Power10)",
+    "cx30": r"$\bf{System}\ \bf{B}$" + "\n(AMD EPYC 7742)",
+    "ga02": r"$\bf{System}\ \bf{C}$" + "\n(ARM Neoverse-V2)",
+    "nx05": r"$\bf{System}\ \bf{E}$" + "\n(Intel Xeon Platinum 83252Y)"
+}
+
+algo_speedup = 'SSMJ'
+base_algo = 'HJ'
+file = "join_32.csv"
+# file = "join_64.csv"
+# file = "join_128.csv"
 
 def read_benchmark_file(filepath):
     with open(filepath, "r") as f:
@@ -56,80 +71,62 @@ def read_benchmark_file(filepath):
             ],
             default=df['name'].str.split('/').str[2].astype(float)
         )
+        df['ratio'] = df['S_scale'].apply(lambda scale: f'1:{int(scale)}')
+    # df = df[df['R'] <= 8]
+    # df = df[df['R'] != 100/1024]
     return df
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--dir", required=True, help="")
 parser.add_argument("--output", required=True, help="")
 args = parser.parse_args()
 
-file = 'join_complete2.csv'
-df = read_benchmark_file(args.dir + '/' + file)
+all_dfs = []
+directories = ['cp03', 'cx30', 'ga02' ,'nx05']
+for dir in directories:
+    print(dir)
+    df = read_benchmark_file(dir + '/' + file)
+    df['system'] = system_name[dir]
+    df['sys'] = dir
+    all_dfs.append(df)
+    
+combined_df = pd.concat(all_dfs, ignore_index=True)
+print("draw plot")
 
 def compute_speedup(data, **kwargs):
-    # Pivot or group to get the baseline cpu_time for JoinSimdSortMerge
-    base = data.loc[data['algo'] == 'SSMJ', 'cpu_time'].values
-    if len(base) == 0:
-        return  # Avoid division by zero or missing baseline
-    base_time = base[0]
-
-    # Compute percent speedup over JoinSimdSortMerge
     data = data.copy()
-    data['speedup_pct'] = (base_time - data['cpu_time']) / base_time * 100
+    baseline = data[data['algo'] == base_algo][['system', 'S_scale', 'cpu_time']].rename(columns={'cpu_time': 'base_time'})
+
+    # # Merge baseline back into the full DataFrame on the 'system' column
+    data = data.merge(baseline, on=['system', 'S_scale'], how='left')
+
+    # # Compute speedup as percent
+    data['speedup_pct'] = (data['base_time'] - data['cpu_time']) / data['base_time'] * 100
+    
 
     # Only keep the algorithms we want to show
-    plot_data = data[data['algo'].isin(['HJ', 'SMJ'])]
+    algos = [algo_speedup]
+    plot_data = data[data['algo'].isin(algos)]
+    # info = plot_data[plot_data['sys']=='ga02']
+    # print(info[['sys','R', 'S_scale', 'speedup_pct']])
+    
+    info2 = plot_data[plot_data['sys']=='nx05']
+    print(info2[['sys','R', 'S_scale', 'speedup_pct']])
+    print("mean:", np.mean(info2['speedup_pct']))
+    print('\n')
 
-    # Draw the barplot centered around 0
-    #  ax = sns.barplot(data=plot_data, x='algo', y='speedup_pct', palette='Set1')
-    ax = sns.barplot(data=plot_data, x='algo', y='speedup_pct', palette=['#e63946', '#a8dadc'])
-
-    y_min, y_max = ax.get_ylim()
-    y_range = y_max - y_min
-    padding = 0.125 * y_range  # space above the bar for label outside
-    offset = 0.05 * y_range
-
-    for container in ax.containers:
-        for rect in container:
-            height = rect.get_height()
-            x = rect.get_x() + rect.get_width() / 2
-            if (height > 0):
-                label = f"+{int(round(height))}%"
-            else:
-                label = f"{int(round(height))}%"
-
-            if height >= 0:
-                # Positive bar
-                if height > 2 * padding:
-                    # Label inside the bar
-                    ax.text(x, height / 2, label, ha='center', va='center', fontsize=10, color='black', fontweight='bold')
-                else:
-                    # Label just above the bar
-                    ax.text(x, height + offset, label, ha='center', va='bottom', fontsize=10, fontweight='bold')
-            else:
-                # Negative bar
-                if abs(height) > 2 * padding:
-                    # Label inside the bar
-                    ax.text(x, height / 2, label, ha='center', va='center', fontsize=10, color='black', fontweight='bold')
-                else:
-                    # Label just below the bar
-                    ax.text(x, height - offset, label, ha='center', va='top', fontsize=10, fontweight='bold')
-
+    markers = ["o", "s", "D", "^", "P"]
+    sns.pointplot(data=plot_data, x='ratio', y='speedup_pct', hue='system', markersize=5, linewidth=2, markers=markers)
     plt.axhline(0, color='black', linewidth=1, linestyle='--')  # Zero baseline
+    
 
-# Usage with seaborn FacetGrid
-g = sns.FacetGrid(df, row="R", col="S_scale", sharex=True, sharey=False, height=1.75, aspect=1.5)
+
+g = sns.FacetGrid(combined_df, row="R", sharex=True, sharey=False, height=1.75, aspect=3)
 g.map_dataframe(compute_speedup)
-g.set_titles("{row_name}|{col_name}")
+g.set_titles("{row_name}")
 
 for i, ax in enumerate(g.axes.flatten()):
     
-    title = ax.get_title()
-    parts = title.split('|')
-    R = parts[0].strip()
-    scale = parts[1].strip()
-    S = float(R) * float(scale)
-    
+    R = ax.get_title()
     def format_unit(value):
         value = float(value)
         if value < 1:
@@ -140,10 +137,12 @@ for i, ax in enumerate(g.axes.flatten()):
         return f'{value:.0f} {unit}' if value.is_integer() else f'{value:.2f} {unit}'
 
     R = format_unit(R)
-    S = format_unit(S)
         
-    new_title = f"{R} ⋈ {S}"
+    new_title = f"|R| = {R}"
     ax.set_title(new_title)
+    
+    tick_texts = ax.get_xticklabels()
+
 
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.0f}"))
     # ax.tick_params(axis="y", labelsize=10)
@@ -157,8 +156,8 @@ for i, ax in enumerate(g.axes.flatten()):
     # # Add minor ticks
     ax.set_yticks(minor_ticks, minor=True)
     ax.set_yticks(major_ticks, minor=False)
-    # ymin, ymax = ax.get_ylim()
-    # # ax.set_ylim(bottom=ymin, top=ymax)
+    ymin, ymax = ax.get_ylim()
+    # ax.set_ylim(bottom=ymin, top=ymax)
 
     # # Customize minor tick appearance (shorter lines)
     ax.tick_params(axis="y", which="minor", length=3, width=1)
@@ -166,8 +165,15 @@ for i, ax in enumerate(g.axes.flatten()):
     ax.grid(True, axis="y", which="minor", linestyle=":", alpha=0.5, linewidth=1)
 
 
-g.set_axis_labels("", "")
-plt.figtext(0, 0.5, "Speedup [%]", va="center", rotation="vertical")
+g.set_axis_labels("|R| : |S|", "")
+plt.figtext(0, 0.5, "Speedup [%]", va="center", rotation="vertical", fontsize=14)
+
+g.add_legend()
+sns.move_legend(
+    g, "lower center",
+    bbox_to_anchor=(.35, 1), ncol=2, title=None, frameon=True,
+)
+# plt.figtext(0.425, -0.05, f"Speedup of {algo_speedup} over {base_algo}", ha="center", fontsize=16)
 
 g.tight_layout()
 # plt.show()
