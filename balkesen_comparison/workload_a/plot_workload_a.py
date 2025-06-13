@@ -33,59 +33,46 @@ def plot_comparison(dir, output):
 
     # Combine all dataframes
     combined_df = pd.concat([df1, df2, df3, df4])
-    # Filter for scale 3 and 5
-    filtered = combined_df
-
-    # Pivot the DataFrame to align 'time_us' for each algorithm at each scale
-    # pivoted = filtered.pivot(index='scale', columns='Algo', values='time_us')
-
-    # # Compute speedup: time_ssmj / time_mway_no_numa
-    # speedup = pivoted['SSMJ [double]'] / pivoted['m-way w/o NUMA']
-    pivoted = filtered.pivot(index='scale', columns='Algo', values='time_us')
-
-    speedup_percent = ((pivoted['SSMJ [double]'] - pivoted['m-way w/o NUMA']) / pivoted['SSMJ [double]']) * 100
-
-    print(speedup_percent)
     
-    # sns.set_theme(style="white")
+    sns.set_theme(style="white")
 
-    # # Plot using seaborn
-    # plt.figure(figsize=(10, 6))
-    # ax = sns.pointplot(data=combined_df, x="scale", y="time_s", hue="Algo", markers=["o", "s", "D", "^"], linestyles=["-", "--", ":", "-."])
+    # Plot using seaborn
+    plt.figure(figsize=(10, 6))
+    ax = sns.pointplot(data=combined_df, x="scale", y="time_s", hue="Algo", markers=["o", "s", "D", "^"], linestyles=["-", "--", ":", "-."])
    
-    # labelsize = 25
+    labelsize = 25
    
-    # ax.tick_params(axis='x', labelsize=20) 
-    # ax.tick_params(axis='y', labelsize=20) 
+    ax.tick_params(axis='x', labelsize=20) 
+    ax.tick_params(axis='y', labelsize=20) 
     
-    # ax.tick_params(axis="x", which="both", bottom=True, top=False)
-    # ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5)
+    ax.tick_params(axis="x", which="both", bottom=True, top=False)
+    ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5)
 
-    # major_ticks = ax.get_yticks()
-    # # Compute minor ticks (midpoints between major ticks)
-    # minor_ticks = (major_ticks[:-1] + major_ticks[1:]) / 2
+    major_ticks = ax.get_yticks()
+    # Compute minor ticks (midpoints between major ticks)
+    minor_ticks = (major_ticks[:-1] + major_ticks[1:]) / 2
 
-    # # Add minor ticks
-    # ax.set_yticks(minor_ticks, minor=True)
-    # ax.set_yticks(major_ticks, minor=False)
-    # ymin, ymax = ax.get_ylim()
-    # ax.set_ylim(bottom=max(ymin, 0), top=ymax)
+    # Add minor ticks
+    ax.set_yticks(minor_ticks, minor=True)
+    ax.set_yticks(major_ticks, minor=False)
+    ymin, ymax = ax.get_ylim()
+    ax.set_ylim(bottom=max(ymin, 0), top=ymax)
 
-    # # Customize minor tick appearance (shorter lines)
-    # ax.tick_params(axis="y", which="minor", length=3, width=1)
-    # ax.grid(True, axis="y", linestyle="-", alpha=0.5, linewidth=1.5)
-    # ax.grid(True, axis="y", which="minor", linestyle=":", alpha=0.5, linewidth=1.5)
+    # Customize minor tick appearance (shorter lines)
+    ax.tick_params(axis="y", which="minor", length=3, width=1)
+    ax.grid(True, axis="y", linestyle="-", alpha=0.5, linewidth=1.5)
+    ax.grid(True, axis="y", which="minor", linestyle=":", alpha=0.5, linewidth=1.5)
     
-    # # Labels and title
-    # plt.xlabel("m * |R| = |S| [1600 * 1e6]", fontsize=labelsize)
-    # plt.ylabel("Join duration [s]", fontsize=labelsize)
+    # Labels and title
+    plt.xlabel("m * |R| = |S| [1600 * 1e6]", fontsize=labelsize)
+    plt.ylabel("Join duration [s]", fontsize=labelsize)
 
-    # # plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=4)
-    # plt.legend([],[], frameon=False)
-    # plt.tight_layout()
+    # plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=4)
+    plt.legend([],[], frameon=False)
+    plt.tight_layout()
     
-    # # Show plot
-    # plt.savefig(output, dpi=500)
+    # Show plot
+    plt.savefig(output, dpi=500)
     # plt.show()
 
 def main():
