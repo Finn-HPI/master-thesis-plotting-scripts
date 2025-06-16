@@ -38,7 +38,8 @@ def plot_comparison(dir, output):
 
     # Plot using seaborn
     plt.figure(figsize=(10, 6))
-    ax = sns.pointplot(data=combined_df, x="scale", y="time_s", hue="Algo", markers=["o", "s", "D", "^"], linestyles=["-", "--", ":", "-."])
+    # , linestyles=["-", "--", ":", "-."]
+    ax = sns.pointplot(data=combined_df, x="scale", y="time_s", hue="Algo", markers=["o", "s", "D", "^"], alpha=0.9)
    
     labelsize = 25
    
