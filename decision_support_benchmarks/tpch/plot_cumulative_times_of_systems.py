@@ -45,7 +45,6 @@ full_name = {
 
 def plot(data, plot_name):
     df = pd.DataFrame(data)
-    print(df.columns)
 
     g = sns.FacetGrid(
         df,
@@ -70,11 +69,11 @@ def plot(data, plot_name):
     )
     label_fontsize = 7
     for arch, ax in g.axes_dict.items():
-        print(df)
+        # print(df)
         # print(df_cum)
-        ax.bar_label(ax.containers[0], fmt="%.2f", fontsize=label_fontsize, rotation=0)
-        ax.bar_label(ax.containers[1], fmt="%.2f", fontsize=label_fontsize, rotation=0)
-        ax.bar_label(ax.containers[2], fmt="%.2f", fontsize=label_fontsize, rotation=0)
+        ax.bar_label(ax.containers[0], fmt="%.1f", fontsize=label_fontsize+1, rotation=0,weight='bold')
+        ax.bar_label(ax.containers[1], fmt="%.1f", fontsize=label_fontsize+1, rotation=0,weight='bold')
+        ax.bar_label(ax.containers[2], fmt="%.1f", fontsize=label_fontsize+1, rotation=0,weight='bold')
         i = 0
         times = [[], [], [], []]
         for p in ax.patches:
@@ -83,61 +82,70 @@ def plot(data, plot_name):
             times[int(i / 3)].append(h)
             i += 1
 
-        # i = 0
-        # for p in ax.patches:
-        #     h, w, x = p.get_height(), p.get_width(), p.get_x()
-        #     xy = (x + w / 2.0, h / 2)
-        #     if i < 3:
-        #         if i == 0:
-        #             ax.annotate(
-        #                 text="bl.",
-        #                 xy=xy,
-        #                 color="#dad8d6",
-        #                 ha="center",
-        #                 va="center",
-        #                 rotation=90,
-        #                 fontsize=label_fontsize,
-        #             )
-        #         else:
-        #             ax.annotate(
-        #                 text="baseline",
-        #                 xy=xy,
-        #                 color="#dad8d6",
-        #                 ha="center",
-        #                 va="center",
-        #                 rotation=90,
-        #                 fontsize=label_fontsize +2,
-        #             )
-        #     elif i < 6:
-        #         index = i - 3
-        #         speedup = times[0][index] / times[1][index]
-        #         ax.annotate(
-        #             text=f"{speedup:.2f}x",
-        #             xy=xy,
-        #             color="white",
-        #             ha="center",
-        #             va="center",
-        #             rotation=0,
-        #             fontsize=label_fontsize - 1,
-        #             fontweight="bold",
-        #         )
-        #     elif i < 9:
-        #         index = i - 6
-        #         speedup = times[0][index] / times[2][index]
-        #         ax.annotate(
-        #             text=f"{speedup:.2f}x",
-        #             xy=xy,
-        #             color="white",
-        #             ha="center",
-        #             va="center",
-        #             rotation=0,
-        #             fontsize=label_fontsize - 1,
-        #             fontweight="bold",
-        #         )
-        #     i += 1
+        i = 0
+        for p in ax.patches:
+            h, w, x = p.get_height(), p.get_width(), p.get_x()
+            rotation = 0 if h < 4.0 else 90
+            labelsize = label_fontsize - 1 if h < 4.0 else label_fontsize + 2
+            xy = (x + w / 2.0, h / 2)
+            if i < 3:
+                if i == 0:
+                    ax.annotate(
+                        text="Bl.",
+                        xy=xy,
+                        color="#dad8d6",
+                        ha="center",
+                        va="center",
+                        rotation=0,
+                        fontsize=label_fontsize+1,
+                        fontweight='bold'
+                    )
+                else:
+                    ax.annotate(
+                        text="Baseline",
+                        xy=xy,
+                        color="#dad8d6",
+                        ha="center",
+                        va="center",
+                        rotation=rotation,
+                        fontsize=labelsize,
+                        fontweight='bold'
+                    )
+            elif i < 6:
+                # if i == 3: continue
+                index = i - 3
+                speedup = times[0][index] / times[1][index]
+                ax.annotate(
+                    text=f"{speedup:.2f}x",
+                    xy=xy,
+                    color="white",
+                    ha="center",
+                    va="center",
+                    rotation=rotation,
+                    fontsize=labelsize,
+                    fontweight="bold",
+                )
+            elif i < 9:
+                index = i - 6
+                speedup = times[0][index] / times[2][index]
+                ax.annotate(
+                    text=f"{speedup:.2f}x",
+                    xy=xy,
+                    color="white",
+                    ha="center",
+                    va="center",
+                    rotation=rotation,
+                    fontsize=labelsize,
+                    fontweight="bold",
+                )
+            i += 1
 
-    g.set_titles(col_template="{col_name}", row_template="", size=12, fontweight="bold")
-    g.set_ylabels(label=f"Time [{time_unit}]")
+    g.set_titles(col_template="{col_name}", row_template="", size=14, fontweight="bold")
+    g.set_ylabels(label=f"Time [{time_unit}]", fontsize=14)
+    g.set_xlabels(label=f"Scale Factor", fontsize=14)
+    
+    for ax in g.axes.flat:
+        ax.tick_params(axis='both', labelsize=14)  # Change '10' to desired font size
 
     # g.add_legend()
     # sns.move_legend(
