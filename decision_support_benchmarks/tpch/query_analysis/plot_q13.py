@@ -2,7 +2,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+from matplotlib.patches import Patch
+import matplotlib.patches as mpatches
 from statistics import geometric_mean
+from matplotlib.pyplot import *
 import sys
 from scipy.stats import gstd
 from scipy.stats import gmean
@@ -254,36 +257,45 @@ def annotate(data, **kws):
     operator_time_gstd = gstd(time_sums)
     ax = plt.gca()
 
-    gap = 0.05
+    gap = 0.07
     x = 0.05
-    y = 0.95
+    y = 0.925
+    textsize = 14
 
     ax.text(
         x,
         y,
-        f"|R| = {int(left_rows)} * SF (GSD={lrows_std:.3f})",
+        f"|R| = SF $\\cdot$ {int(left_rows)} (GSD={lrows_std:.3f})",
         transform=ax.transAxes,
+        fontsize=textsize,
+        bbox=dict(facecolor="white", edgecolor="none", boxstyle="round,pad=0.2",alpha=0.3),
     )
     y -= gap
     ax.text(
         x,
         y,
-        f"|S| = {int(right_rows)} * SF, (GSD={rrows_std:.3f}",
+        f"|S| = SF $\\cdot$ {int(right_rows)} (GSD={rrows_std:.3f})",
         transform=ax.transAxes,
+        fontsize=textsize,
+        bbox=dict(facecolor="white", edgecolor="none", boxstyle="round,pad=0.2",alpha=0.3),
     )
     y -= gap
     ax.text(
         x,
         y,
-        f"|O| = {int(output_rows)} * SF (GSD={orows_std:.3f})",
+        f"|O| = SF $\\cdot$ {int(output_rows)} (GSD={orows_std:.3f})",
         transform=ax.transAxes,
+        fontsize=textsize,
+        bbox=dict(facecolor="white", edgecolor="none", boxstyle="round,pad=0.2",alpha=0.3),
     )
     y -= gap
     ax.text(
         x,
         y,
-        f"Total = SF * {operator_time:.2f} {time_unit} (GSD={operator_time_gstd:.3f})",
+        f"$t_{{tot}}$ = SF $\\cdot$ {operator_time:.2f} {time_unit} (GSD={operator_time_gstd:.3f})",
         transform=ax.transAxes,
+        fontsize=textsize,
+        bbox=dict(facecolor="white", edgecolor="none", boxstyle="round,pad=0.2",alpha=0.3),
     )
 
 
@@ -301,12 +313,15 @@ def plot(data, query, plot_name):
         err_kws={"color": "black", "alpha": 0.4, "linewidth": 2},
     )
 
-    g.set_ylabels(label=f"SF normalized time [{time_unit}]")
+    g.set_ylabels(label=f"Normalized time [{time_unit}]", fontsize=20)
     g.set_xlabels(label=f"")
-    g.set_titles("{col_name}")
     g.map_dataframe(annotate)
+    g.set_titles("{col_name}")
 
-   
+    for ax in g.axes.flat:
+        ax.set_title(ax.get_title(), fontsize=20)
+        ax.tick_params(axis="both", which="major", labelsize=14)
+
     # Define the color mapping for each step (this is where the step_to_color comes in)
     step_to_color = {
         "BuildSideMaterializing": (0.1, 0.4, 0.6),
@@ -336,9 +351,55 @@ def plot(data, query, plot_name):
             for container in ax.containers:
                 labels = [f"{int(bar.get_height())}" for bar in container]
                 ax.bar_label(container, labels=labels, padding=5)
-        ax.legend()
+        # ax.legend(fontsize=12,ncol=1)
 
-    g.savefig(plot_name + ".png", dpi=500, bbox_inches="tight")
+    # HJ
+    group1 = [
+        Patch(color=(0.1, 0.4, 0.6), label="BuildSideMaterializing"),
+        Patch(color=(0.8, 0.4, 0.05), label="ProbeSideMaterializing"),
+        Patch(color=(0.14, 0.5, 0.14), label="Clustering"),
+        Patch(color=(0.67, 0.12, 0.12), label="Building"),
+        Patch(color=(0.46, 0.32, 0.59), label="Probing"),
+        Patch(color=(0.2, 0.2, 0.2), label="OutputWriting"),
+    ]
+
+    # SSMJ
+    group2 = [
+        Patch(color=(0.1, 0.4, 0.6), label="LeftSideMaterialize"),
+        Patch(color=(0.8, 0.4, 0.05), label="RightSideMaterialize"),
+        Patch(color=(0.44, 0.27, 0.24), label="LeftSidePartition"),
+        Patch(color=(0.71, 0.37, 0.64), label="RightSidePartition"),
+        Patch(color=(0.44, 0.44, 0.44), label="LeftSideSortBuckets"),
+        Patch(color=(0.66, 0.67, 0.11), label="RightSideSortBuckets"),
+        Patch(color=(0.1, 0.4, 0.6), label="FindJoinPartner"),
+        Patch(color=(0.2, 0.2, 0.2), label="OutputWriting"),
+    ]
+    legendfontsize = 14
+    legend1 = ax.legend(
+        handles=group1,
+        loc="lower left",
+        bbox_to_anchor=(-2.05, -0.41),
+        ncol=2,
+        fontsize=legendfontsize,
+    )
+    legend1.get_title().set_position((0, 1))
+    legend2 = ax.legend(
+        handles=group2,
+        loc="lower left",
+        bbox_to_anchor=(-0.8, -0.41),
+        ncol=3,
+        fontsize=legendfontsize,
+    )
+
+    # Add both legends to the figure
+    gca().add_artist(legend1)
+    gca().add_artist(legend2)
+    # g.fig.subplots_adjust(bottom=0.5)
+    # plt.subplots_adjust(bottom=0.5)
+    # plt.subplots_adjust(bottom=0.5)
+    g.savefig(
+        plot_name, dpi=500, bbox_inches="tight", bbox_extra_artists=[legend1, legend2]
+    )
     # plt.show()
 
 
@@ -384,7 +445,7 @@ if __name__ == "__main__":
             times_dir_path = os.path.join(clean_times_path, dir_path)
             basic_info = extract_basic_info(prefix, dir_path, query)
             times = extract_times_for_query(prefix, times_dir_path, query)
-            fill_data(data, basic_info, times, label, f"TPC-H {query}", sf)
+            fill_data(data, basic_info, times, label, f"Query {query}", sf)
 
     df = pd.DataFrame(data)
     plot(data, f"TPC-H {query}", args.output)
