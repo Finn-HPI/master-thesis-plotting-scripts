@@ -116,11 +116,11 @@ def compute_speedup(data, **kwargs):
 
     markers = ["o", "s", "D", "^", "P"]
     sns.pointplot(data=plot_data, x='ratio', y='speedup_pct', hue='system', markersize=5, linewidth=2, markers=markers)
-    plt.axhline(0, color='black', linewidth=1, linestyle='--')  # Zero baseline
+    plt.axhline(0, color='black', linewidth=1.5, linestyle='--')  # Zero baseline
     
 
 
-g = sns.FacetGrid(combined_df, row="R", sharex=True, sharey=False, height=1.75, aspect=3)
+g = sns.FacetGrid(combined_df, row="R", sharex=True, sharey=False, height=2.2, aspect=2.5)
 g.map_dataframe(compute_speedup)
 g.set_titles("{row_name}")
 
@@ -139,15 +139,15 @@ for i, ax in enumerate(g.axes.flatten()):
     R = format_unit(R)
         
     new_title = f"|R| = {R}"
-    ax.set_title(new_title)
+    ax.set_title(new_title, fontsize=18)
     
     tick_texts = ax.get_xticklabels()
 
 
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.0f}"))
     # ax.tick_params(axis="y", labelsize=10)
-    ax.tick_params(axis="x", which="both", bottom=True, top=False)
-    ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5)
+    ax.tick_params(axis="x", which="both", bottom=True, top=False, labelsize=16)
+    ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5, labelsize=15)
 
     major_ticks = ax.get_yticks()
     # Compute minor ticks (midpoints between major ticks)
@@ -165,16 +165,16 @@ for i, ax in enumerate(g.axes.flatten()):
     ax.grid(True, axis="y", which="minor", linestyle=":", alpha=0.5, linewidth=1)
 
 
-g.set_axis_labels("|R| : |S|", "")
-plt.figtext(0, 0.5, "Speedup [%]", va="center", rotation="vertical", fontsize=14)
+g.set_axis_labels("|R| : |S|", "", fontsize=18)
+plt.figtext(-0.01, 0.5, "Speedup [%]", va="center", rotation="vertical", fontsize=24)
 
 g.add_legend()
 sns.move_legend(
     g, "lower center",
-    bbox_to_anchor=(.35, 1), ncol=2, title=None, frameon=True,
+    bbox_to_anchor=(.35, 1), ncol=2, title=None, frameon=True, fontsize=13
 )
 # plt.figtext(0.425, -0.05, f"Speedup of {algo_speedup} over {base_algo}", ha="center", fontsize=16)
 
 g.tight_layout()
 # plt.show()
-g.savefig(args.output, dpi=500)
+g.savefig(args.output, dpi=300)

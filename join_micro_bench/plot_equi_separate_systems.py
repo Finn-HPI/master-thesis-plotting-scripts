@@ -92,9 +92,7 @@ def read_benchmark_file(filepath):
             ],
             default=df["name"].str.split("/").str[2].astype(float),
         )
-    df["join"] = df.apply(
-        lambda row: f"{format_unit(row['R'])}", axis=1
-    )
+    df["join"] = df.apply(lambda row: f"{format_unit(row['R'])}", axis=1)
     return df[df["R"] == df["S"]]
 
 
@@ -133,30 +131,30 @@ df = df[df["algo"] == speedup_algo]
 
 def plot_speedup(data, **kwargs):
     system = data["sys"].iloc[0]
-    print('system:', system)
-    print(data[['join', 'speedup_percent']])
-    print('\n')
+    print("system:", system)
+    print(data[["join", "speedup_percent"]])
+    print("\n")
     ax = sns.pointplot(
         data=data,
         x="join",
         y="speedup_percent",
-        markersize=5,
-        linewidth=2,
+        # markersize=5,
+        # linewidth=2,
         color=sys_color[system],
         order=["1 K", "100 K", "1 M", "8 M", "16 M"],
     )
-    ax.axhline(0, color="black", linewidth=1, linestyle="--")  # Zero baseline
+    ax.axhline(0, color="black", linewidth=2.5, linestyle="--")  # Zero baseline
     ax.set_xlabel("")
     if system == "cp03":
-        ax.set_ylabel("Speedup [%]", fontsize=18)
+        ax.set_ylabel("Speedup [%]", fontsize=26)
     else:
         ax.set_ylabel("", fontsize=14)
 
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.0f}"))
     # ax.tick_params(axis="y", labelsize=10)
-    ax.tick_params(axis="x", which="both", bottom=True, top=False, labelsize=14)
+    ax.tick_params(axis="x", which="both", bottom=True, top=False, labelsize=18)
     ax.tick_params(
-        axis="y", which="both", left=True, top=False, width=1.25, labelsize=14
+        axis="y", which="both", left=True, top=False, width=1.25, labelsize=18
     )
 
     major_ticks = ax.get_yticks()
@@ -165,6 +163,9 @@ def plot_speedup(data, **kwargs):
 
     ax.set_yticks(minor_ticks, minor=True)
     ax.set_yticks(major_ticks, minor=False)
+    ymax = data["speedup_percent"].max()
+    ymin = data["speedup_percent"].min()
+    # ax.set_ylim(top=ymax * 1.12)
 
     ax.tick_params(axis="y", which="minor", length=3, width=1)
     ax.grid(True, axis="y", linestyle="-", linewidth=1.25)
@@ -172,11 +173,11 @@ def plot_speedup(data, **kwargs):
 
 
 g = sns.FacetGrid(
-    df, col="system", hue="system", sharex=True, sharey=False, height=2, aspect=2
+    df, col="system", hue="system", sharex=True, sharey=False, height=3, aspect=1.5
 )
 g.map_dataframe(plot_speedup)
-g.set_titles("{col_name}", size=16)
+g.set_titles("{col_name}", size=21, pad=15)
 
 # plt.figtext(0.425, -0.05, f"Speedup of {speedup_algo} over {base_algo}", ha="center", fontsize=16)
 
-g.savefig(args.output, dpi=500, bbox_inches="tight")
+g.savefig(args.output, dpi=300, bbox_inches="tight")
