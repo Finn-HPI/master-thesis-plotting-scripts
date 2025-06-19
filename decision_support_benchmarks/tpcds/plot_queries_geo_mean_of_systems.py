@@ -61,23 +61,23 @@ def plot(data, plot_name):
     # Rename the column to reflect the aggregated value
     df.rename(columns={"Time": "GeoMeanTime"}, inplace=True)
 
-    hj_times = df[df["Algo"] == "HJ"][["Query", "Scale Factor", "GeoMeanTime"]]
+    hj_times = df[df["Algo"] == "HJ (Baseline)"][["Query", "Scale Factor", "GeoMeanTime"]]
     hj_times = hj_times.rename(columns={"GeoMeanTime": "HJ_GeoMeanTime"})
 
     # Merge HJ baseline back into the full dataframe
     df = df.merge(hj_times, on=["Query", "Scale Factor"], how="left")
 
     # Normalize
-    df["NormalizedTime"] = df["GeoMeanTime"] / df["HJ_GeoMeanTime"]
+    df["NormalizedTime"] = df["HJ_GeoMeanTime"] / df["GeoMeanTime"]
     print(df)
 
-    subset = df[(df["Algo"] == "HJ") & (df["Scale Factor"] == "100")]
+    subset = df[(df["Algo"] == "HJ (Baseline)") & (df["Scale Factor"] == "100")]
     query_order = (
         subset.groupby("Query")["GeoMeanTime"].mean().sort_values().index.tolist()
     )
 
     sns.set_theme(style="white")
-    colwrap = 6
+    colwrap = 5
     g = sns.FacetGrid(
         df,
         col="Query",
@@ -86,16 +86,17 @@ def plot(data, plot_name):
         height=2,
         aspect=1.5,
         col_wrap=colwrap,
-        col_order=query_order,
+        # col_order=query_order,
     )
     g.map_dataframe(
         sns.pointplot,
         x="Scale Factor",
         y="NormalizedTime",
         hue="Algo",
-        hue_order=["SSMJ", "SSMJ w/o Bloom Filter", "HJ"],
+        hue_order=["SSMJ", "SSMJ w/o Bloom Filter", "HJ (Baseline)"],
         palette=["#082a54", "#59a89c", "#e02b35"],
         markers=["D", "o", "^"],
+        linestyles=['-','-','--'],
         order=["10", "50", "100"],
         markersize=4,
         linewidth=2.5,
@@ -104,17 +105,46 @@ def plot(data, plot_name):
     g.fig.subplots_adjust(hspace=-6, wspace=-1)
 
     g.set_titles(
-        col_template="Q {col_name}", row_template="", size=14, fontweight="bold"
+        col_template="Q {col_name}", row_template="", size=18, fontweight="bold"
     )
+    
+    query_annotate_info = {
+        q: {sf: False for sf in scale_factors}
+        for q in query_order
+    }
+    query_annotate_info['15'][50] = True
+    query_annotate_info['17'][50] = True
+    query_annotate_info['17'][100] = True
+    query_annotate_info['25'][100] = True
+    query_annotate_info['29'][10] = True
+    query_annotate_info['29'][100] = True
+    query_annotate_info['34'][100] = True
+    query_annotate_info['48'][50] = True
+    query_annotate_info['50'][50] = True
+    query_annotate_info['50'][100] = True
+    query_annotate_info['55'][50] = True
+    query_annotate_info['55'][100] = True
+    query_annotate_info['65'][100] = True
+    query_annotate_info['85'][100] = True
+    query_annotate_info['88'][50] = True
+    query_annotate_info['88'][100] = True
+    query_annotate_info['92'][100] = True
+    query_annotate_info['93'][10] = True
+    query_annotate_info['96'][50] = True
+    # print(query_order)
+    
+    def draw_below(query_number: str, scale_factor: int) -> bool:
+        return query_annotate_info.get(query_number, {}).get(scale_factor, False)
 
     for i, ax in enumerate(g.axes.flatten()):
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.1f}"))
-        ax.tick_params(axis="y", labelsize=10)
+        ax.tick_params(axis="both", labelsize=14)
         ax.tick_params(axis="x", which="both", bottom=True, top=False)
         ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5)
 
+        ax.set_xlabel(f"Scale Factor", fontsize=18)
         if i % colwrap == 0:
-            ax.set_ylabel(f"Time (relative to HJ)", fontsize=10)
+            ax.set_ylabel(f"Speedup", fontsize=18)
         else:
             ax.set_ylabel("")
 
@@ -136,22 +166,34 @@ def plot(data, plot_name):
         query = ax.get_title().replace("Q ", "")
 
         # Filter the relevant HJ data for this query
-        hj_data = df[(df["Query"] == query) & (df["Algo"] == "HJ")]
+        hj_data = df[(df["Query"] == query) & (df["Algo"] == "HJ (Baseline)")]
 
+        annotate_size = 14
         for _, row in hj_data.iterrows():
             x = row["Scale Factor"]
             y = row["NormalizedTime"]
             hj_time = row["HJ_GeoMeanTime"]
-
-            text = ax.annotate(
-                f"{hj_time:.2f} {time_unit}",
-                xy=(x, y),
-                xytext=(0, 5),
-                textcoords="offset points",
-                ha="center",
-                fontsize=8,
-                color="#a65358",
-            )
+            below = draw_below(query, int(x))
+            if below:
+                text = ax.annotate(
+                    f"{hj_time:.2f} {time_unit}",
+                    xy=(x, y),
+                    xytext=(0, -17),
+                    textcoords="offset points",
+                    ha="center",
+                    fontsize=annotate_size,
+                    color="#cb434d",
+                )
+            else:
+                text = ax.annotate(
+                    f"{hj_time:.2f} {time_unit}",
+                    xy=(x, y),
+                    xytext=(0, 5),
+                    textcoords="offset points",
+                    ha="center",
+                    fontsize=annotate_size,
+                    color="#cb434d",
+                )
             text.set_path_effects(
                 [
                     path_effects.Stroke(
@@ -163,9 +205,9 @@ def plot(data, plot_name):
 
     g.add_legend()
     g.tight_layout()
-    sns.move_legend(g, "upper left", bbox_to_anchor=(0.61, 0.09), frameon=False)
+    sns.move_legend(g, "lower center", bbox_to_anchor=(0.425, 0.985), frameon=False, fontsize=20, ncol=3)
 
-    g.savefig(plot_name, dpi=500, bbox_inches="tight")
+    g.savefig(plot_name, dpi=300, bbox_inches="tight")
     # plt.show()
 
 
@@ -252,7 +294,7 @@ if __name__ == "__main__":
                 )
 
                 for label, time in [
-                    ("HJ", time_hj),
+                    ("HJ (Baseline)", time_hj),
                     ("SSMJ", time_ssmj),
                     ("SSMJ w/o Bloom Filter", time_ssmj_no_bf),
                 ]:
