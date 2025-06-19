@@ -5,6 +5,7 @@ import argparse
 from matplotlib.patches import Patch
 from scipy.stats import gmean
 import matplotlib.ticker as ticker
+from matplotlib.ticker import MaxNLocator
 import os
 import re
 
@@ -60,7 +61,7 @@ def plot(data, plot_name):
 
     sns.set_theme(style="white")
 
-    colwrap = 11
+    colwrap = 8
     g = sns.FacetGrid(
         df,
         col="Query",
@@ -69,7 +70,7 @@ def plot(data, plot_name):
         sharey=False,
         sharex=True,
         height=2,
-        aspect=1,
+        aspect=1.5,
     )
     g.map_dataframe(
         sns.barplot,
@@ -79,16 +80,23 @@ def plot(data, plot_name):
         palette=["#e02b35", "#082a54", "#59a89c"],
         order=["HJ", "SSMJ", "SSMJ w/o Bloom Filter"],
     )
-    g.set_titles(
-        col_template="Q {col_name}", row_template="", fontsize=14, fontweight="bold"
-    )
     for i, ax in enumerate(g.axes.flatten()):
+        ax.tick_params(axis='both', labelsize=20)
         ax.tick_params(axis="y", which="both", left=True, top=False)
         ax.set_xticklabels([])
         ax.set_ylabel(f"Time [{time_unit}]")
+        
+        # bar_tops = [patch.get_height() for patch in ax.patches]
+        # if bar_tops:
+        #     max_height = max(bar_tops)
+        #     ax.set_ylim(0, max_height * 1.1)  # add 10% headroom
+
+        ax.yaxis.set_major_locator(MaxNLocator(nbins='auto', integer=True, min_n_ticks=3))
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(dummy_formatter))
+        
+        ax.set_xlabel(f"", fontsize=18)
         if i % colwrap == 0:
-            ax.set_ylabel(f"Time [{time_unit}]")
+            ax.set_ylabel(f"Time [{time_unit}]", fontsize=22)
         else:
             ax.set_ylabel("")
 
@@ -98,11 +106,14 @@ def plot(data, plot_name):
         Patch(color=color, label=label)
         for color, label in zip(custom_colors, custom_labels)
     ]
-
+    g.set_titles(
+        col_template="Q {col_name}", row_template="", size=22, fontweight="bold"
+    )
+    g.fig.align_ylabels()
     # Add legend to the FacetGrid
     g.add_legend(handles=handles)
     g.tight_layout()
-    sns.move_legend(g, "upper left", bbox_to_anchor=(0.274, 0.0725), frameon=False)
+    sns.move_legend(g, "upper left", bbox_to_anchor=(0.25, 0.05), frameon=False, fontsize=30, ncol=3)
 
     g.savefig(plot_name, dpi=300, bbox_inches="tight")
     # plt.show()
