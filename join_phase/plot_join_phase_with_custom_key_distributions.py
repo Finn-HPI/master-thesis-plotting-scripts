@@ -2,17 +2,20 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.ticker as ticker
 import argparse
+
 
 def str2bool(v):
     if isinstance(v, bool):
         return v
-    if v.lower() in ('yes', 'true', 't', '1'):
+    if v.lower() in ("yes", "true", "t", "1"):
         return True
-    elif v.lower() in ('no', 'false', 'f', '0'):
+    elif v.lower() in ("no", "false", "f", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -49,13 +52,12 @@ names = {
     "BM_JoinExp": "Exponential Search",
 }
 
-show_scale = 10
 time_unit = "ms"
 
 dist_name = {
-    "key_distribution_a": "(A) R non-unique in [0, |R|) and R = S\n",
-    "key_distribution_b": "(B) R unique in [0, |R|), S non-unique sampled from R\n",
-    "key_distribution_c": "(C) R unique in [0, |R|), S non-unique sampled from R\n(according to Zipf distr.)",
+    "key_distribution_a": "(I)",
+    "key_distribution_b": "(II)",
+    "key_distribution_c": "(III)",
 }
 
 
@@ -70,8 +72,9 @@ def load_dataset(dir):
     data["rsize"] = data["name"].apply(lambda x: int(x.split("/")[1]))
     data["ssize"] = data["name"].apply(lambda x: int(x.split("/")[2]))
     data["algo"] = data["name"].apply(lambda x: names[x.split("/")[0]])
-    data["Comparisons"] = data["Comparisons"].apply(lambda x: (x / 10e6))
+    data["Comparisons"] = data["Comparisons"].apply(lambda x: (x))
     data["dist"] = dist_name[dir]
+    data = data[data["rsize"] == 10485760]
 
     # Read time_data
     time_data = pd.read_csv(dir + "/perf.csv", skiprows=10)
@@ -113,7 +116,7 @@ def load_dataset(dir):
         on="name",
         how="left",
     )
-    data = data[data["scale"] == show_scale]
+    data = data[data["scale"] == 10]
     return data
 
 
@@ -124,79 +127,97 @@ if args.include_b:
     datasets.append("key_distribution_b")
 if args.include_c:
     datasets.append("key_distribution_c")
-    
+
 
 data = pd.concat([load_dataset(dir) for dir in datasets])
-print(data.head())
-
+# sns.set_theme(style="white")
 g = sns.FacetGrid(
-    data, col="dist", col_wrap=3, height=5, aspect=1.5, sharex=False, sharey=False
+    data, col="dist", col_wrap=2, height=6, aspect=2, sharex=False, sharey=False
 )
 
-label_size=20
-# g.set_titles(col_template="{col_name}", weight="bold", size=30)
-g.set_titles(col_template="", weight="bold", size=label_size)
- 
+label_size = 30
+g.set_titles(col_template="{col_name}", weight="semibold", size=35)
+# g.set_titles(col_template="", weight="bold", size=label_size)
+
 ymin = data["Comparisons"].min()
 ymax = data["Comparisons"].max() + 2
 
 
+
 def custom_plot(data, **kwargs):
     ax = plt.gca()
-    ax2 = ax.twinx()
+    
     sns.pointplot(
         data=data,
         x="x",
         y="cpu_time",
         hue="algo",
         ax=ax,
-        markersize=5,
+        # markersize=5,
+        scale=1.5,
         markers=["o", "s", "D", "^", "v"],
     )
+    
+    ax2 = ax.twinx()
     sns.barplot(
         data=data, x="x", y="Comparisons", hue="algo", ax=ax2, alpha=0.4, legend=False
     )
+    # ticks = [1e6, 1e7, 1e8]
+    # ax2.set_yticks(ticks)
+    ax2.set_yscale('log')
+    # ax2.yaxis.set_major_locator(ticker.LogLocator(base=10.0, subs=None, numticks=10))
+    # ax2.yaxis.set_minor_locator(ticker.LogLocator(base=10.0, subs='auto', numticks=10))
+    # ax2.yaxis.set_minor_formatter(ticker.NullFormatter())  # Hide minor tick labels if you want
+    # ax2.get_yaxis().set_major_formatter(ticker.LogFormatter(base=10))
 
-    ax2.set_ylim(ymin, ymax)
-    ax2.set_yticks(np.arange(0, ymax + 1, step=5))
-    
-    ax.tick_params(axis='x', labelsize=14) 
-    ax.tick_params(axis='y', labelsize=14) 
-    ax2.tick_params(axis='y', labelsize=14) 
+    ax2.set_ylim(ymin, ymax * 1.25)
+    # ax2.set_yticks(np.arange(0, ymax + 1, step=5))
+    ax.set_zorder(ax2.get_zorder() + 1)
 
-    if ax == g.axes.flat[-1]:
+    # Make ax background transparent so barplot shows through
+    ax.patch.set_visible(False)
+
+
+    ticklablesize= 22
+    ax.tick_params(axis="x", labelsize=ticklablesize+4)
+    ax.tick_params(axis="y", labelsize=ticklablesize+2)
+    ax2.tick_params(axis="y", labelsize=ticklablesize+2)
+
+    # if ax == g.axes.flat[-1]:
         #    ax2.set_ylabel("Number of key comparisons [$10^6$] $\\mathit{{(bars)}}$", fontsize=16)
-        ax2.set_ylabel("#Key comparisons [M]\n(bars)", fontsize=label_size)
+    ax2.set_ylabel("#Key comparisons (bars)", fontsize=label_size)
         # ax2.set_ylabel('')
         # ax2.set_yticklabels([])
-    else:
-        ax2.set_ylabel("")
-        ax2.set_yticklabels([])
+    # else:
+    #     ax2.set_ylabel("")
+    #     ax2.set_yticklabels([])
 
 
 g.map_dataframe(custom_plot)
+g.figure.subplots_adjust(wspace=0, hspace=0)
 
 custom_xlabels = {
-    "(A) R non-unique in [0, |R|) and R = S\n": "Occurrences of each non-unique value",
-    "(B) R unique in [0, |R|), S non-unique sampled from R\n": "Occurrences of each non-unique value",
-    "(C) R unique in [0, |R|), S non-unique sampled from R\n(according to Zipf distr.)": "Skew [%]",
+    "(I)": "Paramter $x$",
+    "(II)": "Paramter $x$",
+    "(III)": "Skew [%]",
 }
 
-g.set_axis_labels("", f"(lines)\nJoin phase [{time_unit}]", fontsize=label_size)
+g.set_axis_labels("", f"Join phase [{time_unit}] (lines)", fontsize=label_size)
 for ax, title in zip(g.axes.flat, g.col_names):
     ax.set_xlabel(custom_xlabels.get(title, "x"), fontsize=label_size)
 
-# g.add_legend()
-# sns.move_legend(
-#     g,
-#     "lower center",
-#     bbox_to_anchor=(0.5, 1),
-#     ncol=5,
-#     title=None,
-#     frameon=True,
-# )
+g.add_legend()
+sns.move_legend(
+    g,
+    "upper left",
+    bbox_to_anchor=(0.6, 0.45),
+    ncol=1,
+    title=None,
+    frameon=False,
+    fontsize=30,
+)
 
 plt.tight_layout()
 
-g.savefig(args.output, dpi=500)
+g.savefig(args.output, dpi=300)
 # plt.show()
