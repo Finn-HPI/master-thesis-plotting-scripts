@@ -19,6 +19,7 @@ time_units = {
 time_unit = "ns"
 time_divide = time_units[time_unit]  # Nano to Milli
 
+sns.set_theme(style="white")
 
 def extract_times_for_query(dir, query):
     pattern = os.path.join(dir, f"TPC-H_{query}*-PQP.txt")
@@ -88,7 +89,7 @@ def plot(data, plot_name):
     df = df.merge(hj_times, on=["Query", "Scale Factor"], how="left")
 
     # Normalize
-    df["NormalizedTime"] = df["HJ_GeoMeanTime"] / df["GeoMeanTime"]
+    df["Speedup"] = df["HJ_GeoMeanTime"] / df["GeoMeanTime"]
     print(df)
 
     pd.set_option("display.max_rows", None)
@@ -118,7 +119,7 @@ def plot(data, plot_name):
     g.map_dataframe(
         sns.pointplot,
         x="Scale Factor",
-        y="NormalizedTime",
+        y="Speedup",
         hue="Algo",
         hue_order=["SSMJ", "SSMJ w/o Bloom Filter", "HJ (Baseline)"],
         palette=["#082a54", "#59a89c", "#e02b35"],
@@ -140,49 +141,49 @@ def plot(data, plot_name):
     scale_factors = [10, 50, 100]
 
     # Initialize the data structure with False for all specified pairs
-    query_data = {
+    query_annotate_info = {
         q: {sf: False for sf in scale_factors}
         for q in query_nums
     }
-    query_data[3][10] = True
-    query_data[3][50] = True
-    query_data[3][100] = True
-    query_data[4][10] = True
-    query_data[4][50] = True
-    query_data[4][100] = True
-    query_data[5][10] = True
-    query_data[5][100] = True
-    query_data[7][50] = True
-    query_data[7][100] = True
-    query_data[9][10] = True
-    query_data[9][50] = True
-    query_data[9][100] = True
-    query_data[10][10] = True
-    query_data[10][50] = True
-    query_data[10][100] = True
-    query_data[12][10] = True
-    query_data[12][50] = True
-    query_data[12][100] = True
-    query_data[13][10] = True
-    query_data[13][50] = True
-    query_data[13][100] = True
-    query_data[14][10] = True
-    query_data[14][50] = True
-    query_data[14][100] = True
-    query_data[16][10] = True
-    query_data[16][50] = True
-    query_data[17][100] = True
-    query_data[18][10] = True
-    query_data[18][50] = True
-    query_data[18][100] = True
-    query_data[20][50] = True
-    query_data[20][100] = True
-    query_data[21][10] = True
-    query_data[21][50] = True
-    query_data[22][100] = True
+    query_annotate_info[3][10] = True
+    query_annotate_info[3][50] = True
+    query_annotate_info[3][100] = True
+    query_annotate_info[4][10] = True
+    query_annotate_info[4][50] = True
+    query_annotate_info[4][100] = True
+    query_annotate_info[5][10] = True
+    query_annotate_info[5][100] = True
+    query_annotate_info[7][50] = True
+    query_annotate_info[7][100] = True
+    query_annotate_info[9][10] = True
+    query_annotate_info[9][50] = True
+    query_annotate_info[9][100] = True
+    query_annotate_info[10][10] = True
+    query_annotate_info[10][50] = True
+    query_annotate_info[10][100] = True
+    query_annotate_info[12][10] = True
+    query_annotate_info[12][50] = True
+    query_annotate_info[12][100] = True
+    query_annotate_info[13][10] = True
+    query_annotate_info[13][50] = True
+    query_annotate_info[13][100] = True
+    query_annotate_info[14][10] = True
+    query_annotate_info[14][50] = True
+    query_annotate_info[14][100] = True
+    query_annotate_info[16][10] = True
+    query_annotate_info[16][50] = True
+    query_annotate_info[17][100] = True
+    query_annotate_info[18][10] = True
+    query_annotate_info[18][50] = True
+    query_annotate_info[18][100] = True
+    query_annotate_info[20][50] = True
+    query_annotate_info[20][100] = True
+    query_annotate_info[21][10] = True
+    query_annotate_info[21][50] = True
+    query_annotate_info[22][100] = True
     
     def draw_below(query_number: int, scale_factor: int) -> bool:
-        return query_data.get(query_number, {}).get(scale_factor, False)
+        return query_annotate_info.get(query_number, {}).get(scale_factor, False)
 
 
     for i, ax in enumerate(g.axes.flatten()):
@@ -222,7 +223,7 @@ def plot(data, plot_name):
         annotate_size = 14
         for _, row in hj_data.iterrows():
             x = row["Scale Factor"]
-            y = row["NormalizedTime"]
+            y = row["Speedup"]
             hj_time = row["HJ_GeoMeanTime"]
             below = draw_below(query, int(x))
             if below:

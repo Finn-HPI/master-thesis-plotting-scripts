@@ -68,7 +68,7 @@ def plot(data, plot_name):
     df = df.merge(hj_times, on=["Query", "Scale Factor"], how="left")
 
     # Normalize
-    df["NormalizedTime"] = df["HJ_GeoMeanTime"] / df["GeoMeanTime"]
+    df["Speedup"] = df["HJ_GeoMeanTime"] / df["GeoMeanTime"]
     print(df)
 
     subset = df[(df["Algo"] == "HJ (Baseline)") & (df["Scale Factor"] == "100")]
@@ -91,7 +91,7 @@ def plot(data, plot_name):
     g.map_dataframe(
         sns.pointplot,
         x="Scale Factor",
-        y="NormalizedTime",
+        y="Speedup",
         hue="Algo",
         hue_order=["SSMJ", "SSMJ w/o Bloom Filter", "HJ (Baseline)"],
         palette=["#082a54", "#59a89c", "#e02b35"],
@@ -171,7 +171,7 @@ def plot(data, plot_name):
         annotate_size = 14
         for _, row in hj_data.iterrows():
             x = row["Scale Factor"]
-            y = row["NormalizedTime"]
+            y = row["Speedup"]
             hj_time = row["HJ_GeoMeanTime"]
             below = draw_below(query, int(x))
             if below:

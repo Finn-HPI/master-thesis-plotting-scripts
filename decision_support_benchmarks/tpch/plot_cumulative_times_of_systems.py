@@ -3,6 +3,7 @@ import pandas as pd
 import argparse
 import glob
 import os
+from matplotlib.ticker import MaxNLocator
 
 time_units = {
     "ns": 1,  # Nanoseconds
@@ -43,6 +44,26 @@ full_name = {
 }
 
 
+def points_to_data_units(ax, points):
+    # Convert points to pixels
+    fig = ax.figure
+    dpi = fig.dpi
+    pixels = points * dpi / 72  # 1 point = 1/72 inch
+
+    # Get axis height in pixels
+    bbox = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+    height_in_inches = bbox.height
+    height_in_pixels = height_in_inches * dpi
+
+    # Get y-axis limits and range
+    y_min, y_max = ax.get_ylim()
+    y_range = y_max - y_min
+
+    # Calculate data units per pixel
+    data_per_pixel = y_range / height_in_pixels
+    return pixels * data_per_pixel
+
+
 def plot(data, plot_name):
     df = pd.DataFrame(data)
 
@@ -52,8 +73,8 @@ def plot(data, plot_name):
         sharey=False,
         sharex=True,
         height=3,
-        aspect=1.27,
-        # col_wrap=5,
+        aspect=4,
+        col_wrap=2,
         col_order=["System A", "System B", "System C", "System E"],
     )
     g.map_dataframe(
@@ -63,17 +84,36 @@ def plot(data, plot_name):
         hue="Algo",
         errorbar=None,
         estimator=sum,
+        width=0.925,
         order=["10", "50", "100"],
         hue_order=["HJ", "SSMJ", "SSMJ w/o Bloom Filter"],
         palette=["#e02b35", "#082a54", "#59a89c"],
     )
-    label_fontsize = 7
+    label_fontsize = 26
     for arch, ax in g.axes_dict.items():
         # print(df)
         # print(df_cum)
-        ax.bar_label(ax.containers[0], fmt="%.1f", fontsize=label_fontsize+1, rotation=0,weight='bold')
-        ax.bar_label(ax.containers[1], fmt="%.1f", fontsize=label_fontsize+1, rotation=0,weight='bold')
-        ax.bar_label(ax.containers[2], fmt="%.1f", fontsize=label_fontsize+1, rotation=0,weight='bold')
+        ax.bar_label(
+            ax.containers[0],
+            fmt="%.1f",
+            fontsize=label_fontsize,
+            rotation=0,
+            weight="bold",
+        )
+        ax.bar_label(
+            ax.containers[1],
+            fmt="%.1f",
+            fontsize=label_fontsize,
+            rotation=0,
+            weight="bold",
+        )
+        ax.bar_label(
+            ax.containers[2],
+            fmt="%.1f",
+            fontsize=label_fontsize,
+            rotation=0,
+            weight="bold",
+        )
         i = 0
         times = [[], [], [], []]
         for p in ax.patches:
@@ -82,70 +122,87 @@ def plot(data, plot_name):
             times[int(i / 3)].append(h)
             i += 1
 
+        label_height_data = points_to_data_units(ax, label_fontsize)
+        padding_data = points_to_data_units(ax, 50)  # extra 5 points padding
+        ymin, ymax = ax.get_ylim()
+        # Increase ymax by, say, 5-10% to add space above the highest data point
+        new_ymax = ymax * 1.5
+        ax.set_ylim(ymin, new_ymax)
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=3))
+        
+        # major_ticks = ax.get_yticks()
+        # ax.set_yticks(major_ticks, minor=False)
+     
+
         i = 0
         for p in ax.patches:
             h, w, x = p.get_height(), p.get_width(), p.get_x()
             rotation = 0 if h < 4.0 else 90
-            labelsize = label_fontsize - 1 if h < 4.0 else label_fontsize + 2
-            xy = (x + w / 2.0, h / 2)
+            labelsize = label_fontsize-3
+            # xy = (x + w / 2.0, h / 2)
+            xy = (x + w / 2.0, h + label_height_data + padding_data)
             if i < 3:
                 if i == 0:
                     ax.annotate(
-                        text="Bl.",
-                        xy=xy,
-                        color="#dad8d6",
-                        ha="center",
-                        va="center",
-                        rotation=0,
-                        fontsize=label_fontsize+1,
-                        fontweight='bold'
-                    )
-                else:
-                    ax.annotate(
-                        text="Baseline",
-                        xy=xy,
-                        color="#dad8d6",
-                        ha="center",
-                        va="center",
-                        rotation=rotation,
-                        fontsize=labelsize,
-                        fontweight='bold'
-                    )
-            elif i < 6:
-                # if i == 3: continue
-                index = i - 3
-                speedup = times[0][index] / times[1][index]
-                ax.annotate(
-                    text=f"{speedup:.2f}x",
+                    text="BL",
                     xy=xy,
-                    color="white",
+                    color = "#717070",
                     ha="center",
                     va="center",
-                    rotation=rotation,
+                    rotation=0,
+                    fontsize=labelsize,
+                    # fontweight="bold",
+                )
+                else:
+                    ax.annotate(
+                    text="BL",
+                    xy=(x + w / 2.0, h / 2),
+                    color = "#C9C9C9",
+                    ha="center",
+                    va="center",
+                    rotation=0,
+                    fontsize=labelsize,
+                    # fontweight="bold",
+                )
+              
+
+            elif i < 6:
+                index = i - 3
+                # Relative speedup: percentage reduction in execution time
+                speedup = ((times[0][index] - times[1][index]) / times[0][index]) * 100
+                ax.annotate(
+                    text=f"{speedup:.1f}%",
+                    xy=xy,
+                    color="red" if speedup < 0 else "green",
+                    ha="center",
+                    va="center",
+                    rotation=0,
                     fontsize=labelsize,
                     fontweight="bold",
                 )
             elif i < 9:
                 index = i - 6
-                speedup = times[0][index] / times[2][index]
+                # Relative speedup: percentage reduction in execution time
+                speedup = ((times[0][index] - times[2][index]) / times[0][index]) * 100
                 ax.annotate(
-                    text=f"{speedup:.2f}x",
+                    text=f"{speedup:.1f}%",
                     xy=xy,
-                    color="white",
+                    color="red" if speedup < 0 else "green",
                     ha="center",
                     va="center",
-                    rotation=rotation,
+                    rotation=0,
                     fontsize=labelsize,
                     fontweight="bold",
                 )
             i += 1
 
-    g.set_titles(col_template="{col_name}", row_template="", size=14, fontweight="bold")
-    g.set_ylabels(label=f"Time [{time_unit}]", fontsize=14)
-    g.set_xlabels(label=f"Scale Factor", fontsize=14)
-    
+    g.set_titles(col_template="{col_name}", row_template="", size=35, fontweight="bold")
+    g.set_ylabels(label=f"Time [{time_unit}]", fontsize=28)
+    g.set_xlabels(label=f"Scale Factor", fontsize=28)
+
     for ax in g.axes.flat:
-        ax.tick_params(axis='both', labelsize=14)  # Change '10' to desired font size
+        ax.tick_params(axis="y", labelsize=26, width=2)
+        ax.tick_params(axis="x", labelsize=26, width=4, length=5)
 
     # g.add_legend()
     # sns.move_legend(
@@ -156,8 +213,9 @@ def plot(data, plot_name):
     #     title=None,
     #     frameon=True,
     # )
-
-    g.savefig(plot_name, dpi=500)
+    # g.tight_layout()
+    g.figure.subplots_adjust(wspace=0.075, hspace=1)
+    g.savefig(plot_name, dpi=300, bbox_inches="tight")
     # plt.show()
 
 
@@ -167,7 +225,7 @@ if __name__ == "__main__":
         "--output", required=True, help="Output file name (e.g., plot.png)."
     )
     args = parser.parse_args()
-    
+
     prefix = "TPC-H_"
 
     queries = [2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22]
