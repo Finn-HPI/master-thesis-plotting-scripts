@@ -46,18 +46,32 @@ palette[2] = palette[3]
 palette[3] = palette[4]
 palette = palette[:4]
 
-ax = sns.pointplot(data=final_df, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['s', '^', 'h', 'H'], linestyles=["-", "-", "--", "--"], markersize=5)
+ax = sns.pointplot(data=final_df, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['s', '^', 'h', 'H'], linestyles=["-", "-", "--", "--"], scale=1.5)
 
-ax.tick_params(axis="y", which="both", left=True, labelsize=16)  # Ensure y-ticks are visible
-ax.tick_params(axis="x", which="both", bottom=True, labelsize=16)  # Ensure x-ticks are visible
+ax.tick_params(axis="y", which="both", left=True, labelsize=24)  # Ensure y-ticks are visible
+ax.tick_params(axis="x", which="both", bottom=True, labelsize=24)  # Ensure x-ticks are visible
+major_ticks = ax.get_yticks()
+# Compute minor ticks (midpoints between major ticks)
+minor_ticks = (major_ticks[:-1] + major_ticks[1:]) / 2
+
+# Add minor ticks
+ax.set_yticks(minor_ticks, minor=True)
+ax.set_yticks(major_ticks, minor=False)
+ymin, ymax = ax.get_ylim()
+ax.set_ylim(bottom=max(ymin, 0), top=ymax)
+
+# Customize minor tick appearance (shorter lines)
+ax.tick_params(axis="y", which="minor", length=3, width=1)
+ax.grid(True, axis="y", linestyle="-", alpha=0.5, linewidth=2)
+ax.grid(True, axis="y", which="minor", linestyle=":", alpha=0.5, linewidth=2)
 
 # plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=len(final_df['file'].unique()))
 plt.legend([],[], frameon=False)
 
-plt.ylabel("Throughput [M. tuples / s]", size=20)
-plt.xlabel("Number of tuples [$2^{20}$]", size=20)
+plt.ylabel("Throughput [M. tuples / s]", size=26)
+plt.xlabel("Number of tuples [$2^{20}$]", size=26)
 
 plt.tight_layout()
-plt.savefig(args.output, dpi=600)
+plt.savefig(args.output, dpi=300, bbox_inches="tight")
 # plt.show()
 

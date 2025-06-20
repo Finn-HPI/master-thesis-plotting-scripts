@@ -37,14 +37,14 @@ def plot_comparison(dir, output):
     sns.set_theme(style="white")
 
     # Plot using seaborn
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(11, 6))
     # , linestyles=["-", "--", ":", "-."]
-    ax = sns.pointplot(data=combined_df, x="scale", y="time_s", hue="Algo", markers=["o", "s", "D", "^"], alpha=0.9)
+    ax = sns.pointplot(data=combined_df, x="scale", y="time_s", hue="Algo", markers=["o", "s", "D", "^"], alpha=0.9, scale=1.35)
    
-    labelsize = 25
+    labelsize = 30
    
-    ax.tick_params(axis='x', labelsize=20) 
-    ax.tick_params(axis='y', labelsize=20) 
+    ax.tick_params(axis='x', labelsize=24) 
+    ax.tick_params(axis='y', labelsize=24) 
     
     ax.tick_params(axis="x", which="both", bottom=True, top=False)
     ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5)
@@ -65,11 +65,11 @@ def plot_comparison(dir, output):
     ax.grid(True, axis="y", which="minor", linestyle=":", alpha=0.5, linewidth=1.5)
     
     # Labels and title
-    plt.xlabel("m * |R| = |S| [1600 * 1e6]", fontsize=labelsize)
+    plt.xlabel("m $\\cdot$ |R| = |S| [1600 * 1e6]", fontsize=labelsize)
     plt.ylabel("Join duration [s]", fontsize=labelsize)
 
-    # plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=4)
-    plt.legend([],[], frameon=False)
+    plt.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=4)
+    # plt.legend([],[], frameon=False)
     plt.tight_layout()
     
     # Show plot

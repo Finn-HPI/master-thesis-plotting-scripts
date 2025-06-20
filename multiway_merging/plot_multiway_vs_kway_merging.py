@@ -168,10 +168,10 @@ def main():
     )
     
 
-    # g.add_legend()
-    # sns.move_legend(
-    #     g, "lower center", bbox_to_anchor=(0.425, 1), ncol=3, title=None, frameon=True
-    # )
+    g.add_legend()
+    sns.move_legend(
+        g, "lower center", bbox_to_anchor=(0.425, 1), ncol=3, title=None, frameon=True
+    )
 
     g.savefig(args.output, dpi=500)
     # plt.show()

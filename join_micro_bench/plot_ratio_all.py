@@ -134,7 +134,7 @@ def compute_speedup(data, **kwargs):
 
 
 g = sns.FacetGrid(
-    combined_df, row="R", col="split", sharex=True, sharey=False, height=1.75, aspect=3,
+    combined_df, row="R", col="split", sharex=True, sharey=False, height=2, aspect=3,
 )
 g.map_dataframe(compute_speedup)
 g.set_titles("{row_name}|{col_name}")
@@ -144,6 +144,7 @@ for (i,j,k), data in g.facet_data():
         ax = g.facet_axis(i, j)
         ax.set_axis_off()
         ax.set_title('')
+
 
 for i, ax in enumerate(g.axes.flatten()):
 
@@ -166,7 +167,7 @@ for i, ax in enumerate(g.axes.flatten()):
             new_title += f", {splits} parts"
         if R == "100 K":
             new_title += " (ratio >= 1:16)"
-        ax.set_title(new_title)
+        ax.set_title(new_title, fontsize=18)
 
     tick_texts = ax.get_xticklabels()
 
@@ -174,6 +175,8 @@ for i, ax in enumerate(g.axes.flatten()):
     # ax.tick_params(axis="y", labelsize=10)
     ax.tick_params(axis="x", which="both", bottom=True, top=False)
     ax.tick_params(axis="y", which="both", left=True, top=False, width=1.5)
+    ax.tick_params(axis="y", labelsize=18)
+    ax.tick_params(axis="x", labelsize=20)
 
     major_ticks = ax.get_yticks()
     # Compute minor ticks (midpoints between major ticks)
@@ -192,10 +195,11 @@ for i, ax in enumerate(g.axes.flatten()):
 
 
 # g.set_axis_labels("|R| : |S|", "")
+figfontsize = 20
 g.set_axis_labels("", "")
-plt.figtext(0.425, 0, "|R|:|S|", va="center", fontsize=14)
-plt.figtext(0, 0.5, "Speedup [%]", va="center", rotation="vertical", fontsize=14)
-
+plt.figtext(0.425, 0, "|R|:|S|", va="center", fontsize=figfontsize)
+plt.figtext(0, 0.5, "Speedup [%]", va="center", rotation="vertical", fontsize=figfontsize)
+g.fig.align_ylabels() 
 g.add_legend()
 sns.move_legend(g, "upper left", bbox_to_anchor=(.3, 1),ncol=2,fontsize='16')
 # sns.move_legend(

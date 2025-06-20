@@ -1,9 +1,13 @@
+from matplotlib.text import Annotation
 import seaborn as sns
 import pandas as pd
 import argparse
 import glob
 import os
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.ticker import MaxNLocator
+from matplotlib.transforms import Bbox
 
 time_units = {
     "ns": 1,  # Nanoseconds
@@ -72,23 +76,95 @@ def plot(data, plot_name):
         col="Architecture",
         sharey=False,
         sharex=True,
-        height=3,
-        aspect=4,
+        height=5,
+        aspect=2,
         col_wrap=2,
         col_order=["System A", "System B", "System C", "System E"],
     )
-    g.map_dataframe(
-        sns.barplot,
-        x="Scale Factor",
-        y="Time",
-        hue="Algo",
-        errorbar=None,
-        estimator=sum,
-        width=0.925,
-        order=["10", "50", "100"],
-        hue_order=["HJ", "SSMJ", "SSMJ w/o Bloom Filter"],
-        palette=["#e02b35", "#082a54", "#59a89c"],
-    )
+    # g.map_dataframe(
+    #     sns.barplot,
+    #     x="Scale Factor",
+    #     y="Time",
+    #     hue="Algo",
+    #     errorbar=None,
+    #     estimator=sum,
+    #     width=0.925,
+    #     order=["10", "50", "100"],
+    #     hue_order=["HJ", "SSMJ", "SSMJ w/o Bloom Filter"],
+    #     palette=["#e02b35", "#082a54", "#59a89c"],
+    # )
+    x_order = ["10", "50", "100"]
+
+    def plot_bars_with_arrows(data, color, **kwargs):
+        ax = plt.gca()
+
+        hue_order = ["HJ", "SSMJ", "SSMJ w/o Bloom Filter"]
+        palette = ["#e02b35", "#082a54", "#59a89c"]
+
+        # Grouped data for summed time
+        grouped = data.groupby(["Scale Factor", "Algo"])["Time"].sum().unstack()
+
+        x = np.arange(len(x_order))
+        total_width = 0.9  # Total width occupied by all bars at a tick
+        bar_gap = 0.03  # Gap between hue bars
+        n_hues = len(hue_order)
+        bar_width = (total_width - bar_gap * (n_hues - 1)) / n_hues
+
+        # Draw bars with spacing
+        for i, hue in enumerate(hue_order):
+            offset = -total_width / 2 + i * (bar_width + bar_gap) + bar_width / 2
+            xpos = x + offset
+            times = grouped[hue].reindex(x_order)
+
+            ax.bar(
+                xpos,
+                times,
+                width=bar_width,
+                label=hue,
+                color=palette[i],
+            )
+
+        labelsize = 26
+        # Add percentage arrows (compared to HJ)
+        for idx, scale in enumerate(x_order):
+            base = grouped.loc[scale, "HJ"]
+            for i, other in enumerate(hue_order[1:], start=1):
+                val = grouped.loc[scale, other]
+                pct = (base - val) / base * 100
+
+                # Position arrow
+                offset = -total_width / 2 + i * (bar_width + bar_gap) + bar_width / 2
+                xpos = x[idx] + offset
+                yoffset = points_to_data_units(ax, labelsize + 10)
+                y_start = val + yoffset if pct > 0 else  val + yoffset * 3
+                arrow_len = max(grouped.loc[scale].max() * 0.1, 5)  # scale with height
+                y_end = y_start + arrow_len if pct > 0 else y_start - arrow_len
+
+                # Arrow annotation
+                arrow_color = "green" if pct > 0 else "red"
+                ax.annotate(
+                    f"{abs(pct):.0f}%",
+                    xy=(xpos, y_start),
+                    xytext=(xpos, y_end),
+                    ha="center",
+                    va="bottom" if pct > 0 else "top",
+                    fontsize=labelsize,
+                    weight="bold",
+                    color=arrow_color,
+                    arrowprops=dict(
+                        arrowstyle="->",
+                        color=arrow_color,
+                        lw=3,
+                    ),
+                )
+        # Ticks and legend
+        ax.set_xticks(x)
+        ax.set_xticklabels(x_order)
+
+    g.map_dataframe(plot_bars_with_arrows)
+    # g.figure.subplots_adjust(wspace=10, hspace=10)
+    # plt.subplots_adjust(top=0.9, bottom=0.15, left=0.15, right=0.95)
+
     label_fontsize = 26
     for arch, ax in g.axes_dict.items():
         # print(df)
@@ -114,91 +190,12 @@ def plot(data, plot_name):
             rotation=0,
             weight="bold",
         )
-        i = 0
-        times = [[], [], [], []]
-        for p in ax.patches:
-            h, w, x = p.get_height(), p.get_width(), p.get_x()
-            xy = (x + w / 2.0, h / 2)
-            times[int(i / 3)].append(h)
-            i += 1
-
-        label_height_data = points_to_data_units(ax, label_fontsize)
-        padding_data = points_to_data_units(ax, 50)  # extra 5 points padding
-        ymin, ymax = ax.get_ylim()
-        # Increase ymax by, say, 5-10% to add space above the highest data point
-        new_ymax = ymax * 1.5
-        ax.set_ylim(ymin, new_ymax)
-        ax.yaxis.set_major_locator(MaxNLocator(nbins=3))
-        
-        # major_ticks = ax.get_yticks()
-        # ax.set_yticks(major_ticks, minor=False)
-     
-
-        i = 0
-        for p in ax.patches:
-            h, w, x = p.get_height(), p.get_width(), p.get_x()
-            rotation = 0 if h < 4.0 else 90
-            labelsize = label_fontsize-3
-            # xy = (x + w / 2.0, h / 2)
-            xy = (x + w / 2.0, h + label_height_data + padding_data)
-            if i < 3:
-                if i == 0:
-                    ax.annotate(
-                    text="BL",
-                    xy=xy,
-                    color = "#717070",
-                    ha="center",
-                    va="center",
-                    rotation=0,
-                    fontsize=labelsize,
-                    # fontweight="bold",
-                )
-                else:
-                    ax.annotate(
-                    text="BL",
-                    xy=(x + w / 2.0, h / 2),
-                    color = "#C9C9C9",
-                    ha="center",
-                    va="center",
-                    rotation=0,
-                    fontsize=labelsize,
-                    # fontweight="bold",
-                )
-              
-
-            elif i < 6:
-                index = i - 3
-                # Relative speedup: percentage reduction in execution time
-                speedup = ((times[0][index] - times[1][index]) / times[0][index]) * 100
-                ax.annotate(
-                    text=f"{speedup:.1f}%",
-                    xy=xy,
-                    color="red" if speedup < 0 else "green",
-                    ha="center",
-                    va="center",
-                    rotation=0,
-                    fontsize=labelsize,
-                    fontweight="bold",
-                )
-            elif i < 9:
-                index = i - 6
-                # Relative speedup: percentage reduction in execution time
-                speedup = ((times[0][index] - times[2][index]) / times[0][index]) * 100
-                ax.annotate(
-                    text=f"{speedup:.1f}%",
-                    xy=xy,
-                    color="red" if speedup < 0 else "green",
-                    ha="center",
-                    va="center",
-                    rotation=0,
-                    fontsize=labelsize,
-                    fontweight="bold",
-                )
-            i += 1
+        # ymin, ymax = ax.get_ylim()
+        # ax.set_ylim(ymin, ymax * 1.8)
 
     g.set_titles(col_template="{col_name}", row_template="", size=35, fontweight="bold")
-    g.set_ylabels(label=f"Time [{time_unit}]", fontsize=28)
-    g.set_xlabels(label=f"Scale Factor", fontsize=28)
+    g.set_ylabels(label=f"Time [{time_unit}]", fontsize=30)
+    g.set_xlabels(label=f"Scale Factor", fontsize=30)
 
     for ax in g.axes.flat:
         ax.tick_params(axis="y", labelsize=26, width=2)
@@ -213,8 +210,6 @@ def plot(data, plot_name):
     #     title=None,
     #     frameon=True,
     # )
-    # g.tight_layout()
-    g.figure.subplots_adjust(wspace=0.075, hspace=1)
     g.savefig(plot_name, dpi=300, bbox_inches="tight")
     # plt.show()
 

@@ -53,9 +53,9 @@ for i, stage in enumerate(stages):
 
 # Add total time labels on top of bars
 for i, total in enumerate(total_times):
-    ax.text(x[i], bottoms[i], f"{total:.2f}", ha='center', va='bottom', fontsize=14, fontweight='bold')
+    ax.text(x[i], bottoms[i], f"{total:.2f}", ha='center', va='bottom', fontsize=18, fontweight='bold')
  
-labelsize = 18
+labelsize = 22
     
 ax.tick_params(axis="y", which="both", left=True, labelsize=labelsize)  # Ensure y-ticks are visible
 ax.tick_params(axis="x", which="both", bottom=True, labelsize=labelsize)  # Ensure x-ticks are visible
@@ -63,14 +63,14 @@ ax.tick_params(axis="x", which="both", bottom=True, labelsize=labelsize)  # Ensu
 plt.ylim(top=1.075 * max(total_times))
 
 # Labels and title
-ax.set_ylabel("Join duration [s]", fontsize=labelsize)
+ax.set_ylabel("Join duration [s]", fontsize=labelsize+4)
 ax.set_xticks(x)
 ax.set_xticklabels(df["algo"], rotation=0)
 
 
-# ax.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=4)
+ax.legend(title="", loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=4)
 
 plt.tight_layout()
 
-plt.savefig(args.output, dpi=500)
+plt.savefig(args.output, dpi=300)
 # plt.show()

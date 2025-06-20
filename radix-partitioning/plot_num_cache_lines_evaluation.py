@@ -113,7 +113,7 @@ def plot_facetgrid(all_data, output):
 
     # Save or show the plot
     if output:
-        g.savefig(output, dpi=500, bbox_inches='tight')
+        g.savefig(output, dpi=300, bbox_inches='tight')
     else:
         plt.show()
 

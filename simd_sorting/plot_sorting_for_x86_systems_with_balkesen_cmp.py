@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import argparse
 import os
 
@@ -67,44 +68,45 @@ for directory in directories:
 
 
 
-# plt.figure(figsize=(14, 6))
-# fontsize = 18
-# plt.rcParams.update({
-#     "font.size": fontsize,
-#     "axes.labelsize": fontsize,
-#     "xtick.labelsize": fontsize,
-#     "ytick.labelsize": fontsize,
-#     "legend.fontsize": fontsize
-# })
+plt.figure(figsize=(14, 6))
+fontsize = 18
+plt.rcParams.update({
+    "font.size": fontsize,
+    "axes.labelsize": fontsize,
+    "xtick.labelsize": fontsize,
+    "ytick.labelsize": fontsize,
+    "legend.fontsize": fontsize
+})
 
-# sns.set_theme(style="white")
+sns.set_theme(style="white")
 
-# palette = sns.color_palette()[:5]
-# g = sns.FacetGrid(final_df, col="directory", sharey=False, sharex=True, col_wrap=3, height=6, aspect=1.5)
+palette = sns.color_palette()[:5]
+g = sns.FacetGrid(final_df, col="directory", sharey=False, sharex=True, col_wrap=3, height=6, aspect=1.5)
 
-# g.map_dataframe(sns.pointplot, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['o', 's', '^', 'h', 'H'], linestyles=["-", "-", "-", "--", "--"], hue_order=['SIMD sort [double]', 'SIMD sort [int64_t]', 'AVX sort', 'boost::pdqsort', 'std::sort'], markersize=5)
-# g.set_titles(col_template="{col_name}", row_template="", size=30)#, weight="bold")
+g.map_dataframe(sns.pointplot, x="scale", y="throughput_mtuples_per_sec", hue="file", palette=palette, markers=['o', 's', '^', 'h', 'H'], linestyles=["-", "-", "-", "--", "--"], hue_order=['SIMD sort [double]', 'SIMD sort [int64_t]', 'AVX sort', 'boost::pdqsort', 'std::sort'], scale=1.5)
+g.set_titles(col_template="{col_name}", row_template="", size=30)#, weight="bold")
 
-# for ax in g.axes.flat:
-#     ax.grid(True, axis='y', linestyle='--', linewidth=1)
-#     ax.set_xlabel("")  # Remove individual x-axis titles
-#     ax.set_ylabel("")  # Remove individual y-axis titles
-
-
-# plt.figtext(0.5, -0.05, "Number of tuples [$2^{20}$]", ha="center", fontsize=26)
-# plt.figtext(-0.015, 0.5, "Throughput [M. tuples / s]", va="center", rotation="vertical", fontsize=26)
-
-# for ax in g.axes.flat:
-#     ax.tick_params(axis="y", which="both", left=True, labelsize=18)  # Ensure y-ticks are visible
-#     ax.tick_params(axis="x", which="both", bottom=True, labelsize=18)  # Ensure x-ticks are visible
+for ax in g.axes.flat:
+    ax.grid(True, axis='y', linestyle='--', linewidth=1)
+    ax.set_xlabel("")  # Remove individual x-axis titles
+    ax.set_ylabel("")  # Remove individual y-axis titles
+    ax.yaxis.set_major_locator(MaxNLocator(nbins='auto', integer=True, min_n_ticks=5))
 
 
-# # g.add_legend()
-# # sns.move_legend(
-# #         g, "lower center",
-# #         bbox_to_anchor=(.5, 1), ncol=5, title=None, frameon=True,
-# #     )
+plt.figtext(0.5, -0.05, "Number of tuples [$2^{20}$]", ha="center", fontsize=30)
+plt.figtext(-0.015, 0.5, "Throughput [M. tuples / s]", va="center", rotation="vertical", fontsize=30)
 
-# plt.tight_layout()
-# g.savefig(args.output, dpi=500)
-# # plt.show()
+for ax in g.axes.flat:
+    ax.tick_params(axis="y", which="both", left=True, labelsize=26)  # Ensure y-ticks are visible
+    ax.tick_params(axis="x", which="both", bottom=True, labelsize=26)  # Ensure x-ticks are visible
+
+
+# g.add_legend()
+# sns.move_legend(
+#         g, "lower center",
+#         bbox_to_anchor=(.5, 1), ncol=5, title=None, frameon=True,
+#     )
+
+plt.tight_layout()
+g.savefig(args.output, dpi=300)
+# plt.show()

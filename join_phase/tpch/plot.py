@@ -64,7 +64,8 @@ def plot(data, plot_name):
 
     # Define a consistent color palette for the algorithms
     algo_order = sorted(df["Algo"].unique())
-    palette = sns.color_palette("tab10", n_colors=len(algo_order))
+    # palette = sns.color_palette("tab10", n_colors=len(algo_order))
+    palette = ['#377eb8', '#ff7f00', '#4daf4a']
     color_mapping = dict(zip(algo_order, palette))
 
     # Create subplots: 1 row, 2 columns
@@ -76,43 +77,15 @@ def plot(data, plot_name):
     ax3 = sns.barplot(
         data=df, x="Query", y="Time", hue="Algo", ax=ax[0], palette=color_mapping
     )
+    ax3.tick_params(axis="both", which="both", bottom=True, top=False, labelsize=12)
+    
     sns.move_legend(
-        ax3, "lower center", bbox_to_anchor=(0.5, 1), ncol=3, title=None, frameon=True
+        ax3, "lower center", bbox_to_anchor=(0.5, 1), ncol=3, title=None, frameon=True, fontsize=12
     )
 
     # Cumulative times
     cumulative_times = df.groupby("Algo")["Time"].sum().reset_index()
     cumulative_times["Time"] = cumulative_times["Time"].astype(int)
-
-    # # Sort df so the order is consistent per group
-    # df_sorted = df.sort_values(by=["Query", "Algo"])
-
-    # # Group by Query
-    # results = []
-
-    # for _, group in df_sorted.groupby("Query"):
-    #     group = group.reset_index(drop=True)
-    #     results.append(
-    #         {
-    #             "Query": group.loc[0, "Query"],
-    #             group.loc[0, "Algo"]: group.loc[0, "Time"],
-    #             group.loc[2, "Algo"]: group.loc[2, "Time"],
-    #             group.loc[1, "Algo"]: group.loc[1, "Time"],
-    #             f"Speedup {group.loc[2, "Algo"]} (cf. {group.loc[0, "Algo"]}) [%]": f'x{(
-    #                 group.loc[0, "Time"] / group.loc[2, "Time"]
-    #             ):.4f}',
-    #             f"Speedup {group.loc[1, "Algo"]} (cf. {group.loc[0, "Algo"]}) [%]": f'x{(
-    #                 group.loc[0, "Time"] / group.loc[1, "Time"]
-    #             ):.4f}',
-    #             f"Speedup {group.loc[1, "Algo"]} (cf. {group.loc[2, "Algo"]}) [%]": f'x{(
-    #                 group.loc[2, "Time"] / group.loc[1, "Time"]
-    #             ):.4f}',
-    #         }
-    #     )
-
-    # # Turn into DataFrame
-    # slowdown_df = pd.DataFrame(results)
-    # print(slowdown_df.to_latex(index=False, float_format="{:.4f}".format))
 
     sns.barplot(
         data=cumulative_times,
@@ -128,9 +101,11 @@ def plot(data, plot_name):
         ],
         dodge=False,  # No grouped bars, just one per Algo
     )
+
+    
     ax[1].set_ylim(0, cumulative_times["Time"].max() * 1.1)
-    ax[0].set(ylabel=f"Join phase time [{time_unit}]")
-    ax[0].set(xlabel=f"TPC-H query")
+    ax[0].set_ylabel(f"Join phase time [{time_unit}]", fontsize=16)
+    ax[0].set_xlabel("TPC-H queries", fontsize=16)
     ax[0].tick_params(axis="y", which="both", left=True)
     ax[0].grid(True, axis="y", linestyle="--", alpha=0.5)
     ax[1].set(ylabel=None)
@@ -163,11 +138,11 @@ def plot(data, plot_name):
 
     # Annotate bars in the cumulative plot
     for p in ax[1].containers:
-        ax[1].bar_label(p, fontsize=8)
+        ax[1].bar_label(p, fontsize=14, label_type='center', rotation=90, color='white',fontweight='semibold')
 
     plt.tight_layout()
 
-    plt.savefig(plot_name, dpi=500)
+    plt.savefig(plot_name, dpi=300)
     # plt.show()
 
 
